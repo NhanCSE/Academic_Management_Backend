@@ -1,0 +1,20 @@
+###
+POST http://localhost:5000/api/v1/students/create
+Content-Type: application/json
+
+{
+    "fullname": "Trần Thế Nhân",
+    "student_id": "2212384",
+    "gender": "male",
+    "credential_id": "089204006685",
+    "phone_number": "0787919942",
+    "email": "nhan.tranthek22cs@hcmut.edu.vn",
+    "address": "Tỉnh An Giang",
+    "status": "Đang học",
+    "class": "MT22KH05",
+    "major": "Khoa học Máy tính",
+    "level": "Đại học",
+    "program": "Chính quy",
+    "admission": "31-8-2022",
+    "role": "Sinh viên"   
+}
