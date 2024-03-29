@@ -1,4 +1,5 @@
 const db = require("../firebase/firebaseConnection");
+const dbUtils = require("../lib/dbUtils");
 const studentsRef = db.collection("students");
 
 
@@ -43,7 +44,14 @@ const createNewStudent = async (info) => {
     }
 }
 
+const getOneStudent = async (info) => {
+    const conditionFields = Object.keys(info);
+    const conditionValues = Object.values(info);
+    return await dbUtils.findIntersect("students", conditionFields, conditionValues);
+}
+
 module.exports = {
     checkExist,
-    createNewStudent
+    createNewStudent,
+    getOneStudent
 }

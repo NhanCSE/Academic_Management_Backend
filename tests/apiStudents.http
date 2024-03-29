@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "fullname": "Trần Thế Nhân",
-    "student_id": "2212384",
+    "student_id": "2212386",
     "gender": "male",
     "credential_id": "089204006685",
     "phone_number": "0787919942",
@@ -16,5 +16,16 @@ Content-Type: application/json
     "level": "Đại học",
     "program": "Chính quy",
     "admission": "31-8-2022",
-    "role": "Sinh viên"   
+    "role": "Sinh viên",
+    "username": "tranthenhan",
+    "password": "password"   
+}
+
+###
+POST http://localhost:5000/api/v1/students/login
+Content-Type: application/json
+
+{
+    "username": "tranthenhan",
+    "password": "password"
 }
