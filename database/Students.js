@@ -1,4 +1,5 @@
 const db = require("../firebase/firebaseConnection");
+const dbUtils = require("../lib/dbUtils");
 const studentsRef = db.collection("students");
 const Subject = db.collection("subjects");
 
@@ -54,6 +55,8 @@ const checkExistSubject = async (subject_id) => {
     }
 }
 
+
+
 const createNewStudent = async (info) => {
     try {
         const docRef = await studentsRef.add(info);
@@ -68,7 +71,6 @@ const createNewStudent = async (info) => {
         };
     }
 }
-
 const createNewSubject = async(info) => {
     try {
         await Subject.add(info);
@@ -84,9 +86,10 @@ const createNewSubject = async(info) => {
     }
 }
 
-const getStudent = async(req) => {
+const getInfoStudent = async(req) => {
     try {
-        const query = studentsRef.where("student_id","==",req.params.id);
+        console.log(req.user)
+        const query = studentsRef.where("student_id","==",req.user.student_id);
         const querySnapshot = await query.get();
         var data = {}
         querySnapshot.forEach((doc) => {
@@ -141,23 +144,22 @@ const getAllStudents = async() => {
 }
 
 //Cập nhật thông tin sinh viên đối với Sinh viên và Quản trị viên
-const updateStudent = async(req) => {
+const updateInfoStudent = async(req) => {
     try {
-        const role = "Quản trị viên";
+        //const role = "Quản trị viên";
         const newData = req.body;
         const updateData = {
             address: newData.address,
             phone_number: newData.phone_number,
-            email: newData.email
         };
 
-        const query = studentsRef.where("student_id","==",req.params.id);
+        const query = studentsRef.where("student_id","==",req.user.student_id);
         const querySnapshot = await query.get();
 
         querySnapshot.forEach((doc) => {
             
             //Kiểm tra người dùng là quản trị viên hay sinh viên
-            if(role == "Quản trị viên"){
+            if(req.user.role == "Quản trị viên"){
                 studentsRef.doc(doc.id).update(req.body)
             }        
             else {
@@ -180,7 +182,7 @@ const updateStudent = async(req) => {
 // Đăng ký học phần
 const registerSubject = async(req) => {
     try {
-        const query = studentsRef.where("student_id","==", req.params.id);
+        const query = studentsRef.where("student_id","==", req.user.student_id);
         const querySnapshot = await query.get();
 
         const data = {
@@ -206,13 +208,18 @@ const registerSubject = async(req) => {
     }
 }
 
+const getOneStudent = async (info) => {
+    const conditionFields = Object.keys(info);
+    const conditionValues = Object.values(info);
+    return await dbUtils.findIntersect("students", conditionFields, conditionValues);
+}
 module.exports = {
     checkExist,
-    createNewStudent,
-    checkExistSubject,
+    createNewStudent,checkExistSubject,
     createNewSubject,
-    getStudent,
-    updateStudent,
+    getInfoStudent,
+    updateInfoStudent,
     getAllStudents,
-    registerSubject
+    registerSubject,
+    getOneStudent
 }

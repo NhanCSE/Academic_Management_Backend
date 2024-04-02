@@ -1,16 +1,31 @@
 const Students = require("../database/Students");
 const modelsError = require("../models/error");
+const utils = require("../lib/utils");
+
+const generateStudentId = async() => {
+    do{
+        student_id = "22" + (Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000).toString();
+        check = await Students.checkExist(student_id);
+    } while(check.success && check.existed)
+    return student_id;
+}
 
 const createStudent = async (info) => {
-    const checkExist = await Students.checkExist(info.student_id);
+    // const checkExist = await Students.checkExist(info.student_id);
     
-    if(!checkExist.success) {
-        return modelsError.error(404, checkExist.error);
-    }
-    if(checkExist.success && checkExist.existed) {
-        return modelsError.error(404, "Sinh viên đã tồn tại từ trước!")
-    }
+    // if(!checkExist.success) {
+    //     return modelsError.error(404, checkExist.error);
+    // }
+    // if(checkExist.success && checkExist.existed) {
+    //     return modelsError.error(404, "Sinh viên đã tồn tại từ trước!")
+    // }
     
+    info.student_id = await generateStudentId();
+    info.username = info.email.substring(0, info.email.indexOf('@'));
+    // Password ban đầu là số CCCD
+    info.password = utils.hash(info.credential_id);
+    info.active = 0;
+
     const creatingResult = await Students.createNewStudent(info);
     if(creatingResult.success) {
         return {
@@ -46,8 +61,8 @@ const createSubject = async(info) => {
     }
 }
 
-const getStudent = async(req) => {
-    const checkStudent = await Students.getStudent(req);
+const getInfoStudent = async(req) => {
+    const checkStudent = await Students.getInfoStudent(req);
 
     if(!checkStudent.success) {
         return modelsError.error(404, checkStudent.error);
@@ -77,22 +92,22 @@ const getAllStudents = async() => {
     }
 }
 
-const updateStudent = async(req) => {
-    const checkExist = await Students.checkExist(req.params.id);
+const updateInfoStudent = async(req) => {
+    const checkExist = await Students.checkExist(req.user.student_id);
 
     if(!checkExist.success) {
-        return modelsError.error(404, checkStudent.error);
+        return modelsError.error(404, checkExist.error);
     }
     if(checkExist.success && !checkExist.existed) {
         return modelsError.error(404, "Không tìm thấy thông tin người dùng!");
     }
 
-    const updateStudent = await Students.updateStudent(req);
+    const updateStudent = await Students.updateInfoStudent(req);
 
     if(updateStudent.success) {
         return {
             success: true,
-            message: 'Cập nhật thông tin sinh viên mã ' + req.params.id + ' thành công!'
+            message: 'Cập nhật thông tin sinh viên mã ' + req.user.student_id + ' thành công!'
         };
     }
     else {
@@ -102,7 +117,7 @@ const updateStudent = async(req) => {
 }
 
 const registerSubject = async(req) => {
-    const checkExist = await Students.checkExist(req.params.id)
+    const checkExist = await Students.checkExist(req.user.student_id)
 
     if(!checkExist.success) {
         return modelsError.error(404, checkExist.error);
@@ -126,8 +141,8 @@ const registerSubject = async(req) => {
 module.exports = {
     createStudent,
     createSubject,
-    getStudent,
-    updateStudent,
+    getInfoStudent,
+    updateInfoStudent,
     getAllStudents,
     registerSubject
 }

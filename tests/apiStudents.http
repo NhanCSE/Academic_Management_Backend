@@ -16,16 +16,24 @@ Content-Type: application/json
     "level": "Đại học",
     "program": "Chính quy",
     "admission": "31-8-2022",
-    "role": "Sinh viên"   
+    "role": "Sinh viên",
 }
 
 ###
-POST http://localhost:5000/api/v1/students/createSubject
+POST http://localhost:5000/api/v1/students/login
 Content-Type: application/json
 
 {
-    "subject_name": "DSA",
-    "subject_id": "CO2003",
-    "student_id": "2210509",
-    "credits": "4"
+    "username": "tranthenhan",
+    "password": "password"
+}
+
+###
+POST http://localhost:5000/api/v1/students/registerSubject
+Content-Type: application/json
+{
+  "subject_id": "CO2003",
+  "name": "DSA",
+  "semester": "HK231",
+  "credits": "4"
 }

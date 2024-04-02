@@ -1,12 +1,14 @@
 const studentsService = require("../services/studentsService");
 const modelsResponse = require("../models/response");
+const utils = require("../lib/utils");
 
 //@desc  Create Student
 //@route POST /api/v1/student/create
-
 const createStudent = async (req, res) => {
     //Validation and Authorization Part will sooner release
     try {
+        console.log(req.user);
+        //req.body.password = utils.hash(req.body.password);
         const resultCreating = await studentsService.createStudent(req.body);
         
         if(resultCreating.success) {
@@ -39,11 +41,11 @@ const createSubject = async(req, res) => {
 }
 
 //@desc  Get Student
-//@route GET /api/v1/students/getStudent
+//@route GET /api/v1/students/getInfoStudent
 
-const getStudent = async(req, res) => {
+const getInfoStudent = async(req, res) => {
     try {
-        const resultGetting = await studentsService.getStudent(req);
+        const resultGetting = await studentsService.getInfoStudent(req);
 
         if(resultGetting.success) {
             return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
@@ -77,9 +79,9 @@ const getAllStudents = async(req, res) => {
 //@desc  Update Student
 //@route PUT /api/v1/students/updateStudent
 
-const updateStudent = async(req, res) => {
+const updateInfoStudent = async(req, res) => {
     try {
-        const resultUpdating = await studentsService.updateStudent(req);
+        const resultUpdating = await studentsService.updateInfoStudent(req);
 
         if(resultUpdating.success) {
             return modelsResponse.response(res, 200, resultUpdating.message);
@@ -113,8 +115,8 @@ const registerSubject = async(req,res) => {
 module.exports = {
     createStudent,
     createSubject,
-    getStudent,
-    updateStudent,
+    getInfoStudent,
+    updateInfoStudent,
     getAllStudents,
     registerSubject
 }
