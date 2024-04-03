@@ -1,7 +1,21 @@
 ###
-GET  http://localhost:5000/api/v1/teachers/getInfoTeacher
+POST  http://localhost:5000/api/v1/teachers/createTeacher
 Content-Type: application/json
 
 {
-    "teacher_id": "2212365"
+    "fullname": "Bùi Đức Huy",
+    "teacher_id": "2212303",
+    "gender": "male",
+    "date_of_birth": "26/09/2005",
+    "credential_id": "079111111112",
+    "phone_number": "0792222223",
+    "email": "huy.bui@hcmut.edu.vn",
+    "address": "TP Hồ Chí Minh",
+    "homeroom_class": "MT22KH05",
+    "level": "Thạc sĩ",
+    "faculty": "Khoa Khoa học và Kỹ thuật Máy tính",
+    "major": "Công nghệ thông tin",
+    "role": "Giảng viên",
+    "username": "2212364",
+    "password": "123456789"
 }
