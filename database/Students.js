@@ -179,6 +179,28 @@ const updateInfoStudent = async(req) => {
     }
 }
 
+// 
+const deleteStudent = async(req) => {
+    try {
+        const query = studentsRef.where("student_id","==", req.body.student_id);
+        const querySnapshot = await query.get();
+
+        querySnapshot.forEach((doc) => {
+            studentsRef.doc(doc.id).delete();
+        });
+
+        return{
+            success: true
+        }
+    } catch(error) {
+        console.error(error.message);
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+}
+
 // Đăng ký học phần
 const registerSubject = async(req) => {
     try {
@@ -215,11 +237,13 @@ const getOneStudent = async (info) => {
 }
 module.exports = {
     checkExist,
-    createNewStudent,checkExistSubject,
+    createNewStudent,
+    checkExistSubject,
     createNewSubject,
     getInfoStudent,
     updateInfoStudent,
     getAllStudents,
+    deleteStudent,
     registerSubject,
     getOneStudent
 }

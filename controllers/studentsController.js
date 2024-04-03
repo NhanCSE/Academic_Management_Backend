@@ -63,7 +63,7 @@ const getInfoStudent = async(req, res) => {
 
 const getAllStudents = async(req, res) => {
     try {
-        const resultGetting = await studentsService.getAllStudents();
+        const resultGetting = await studentsService.getAllStudents(req);
 
         if(resultGetting.success) {
             return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
@@ -77,7 +77,7 @@ const getAllStudents = async(req, res) => {
 }
 
 //@desc  Update Student
-//@route PUT /api/v1/students/updateStudent
+//@route PUT /api/v1/students/updateInfoStudent
 
 const updateInfoStudent = async(req, res) => {
     try {
@@ -88,6 +88,24 @@ const updateInfoStudent = async(req, res) => {
         }
         else {
             return modelsResponse.response(res, resultUpdating.errorStatus, resultUpdating.message);
+        }
+    } catch(error) {
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
+//@desc  Delete Student
+//@route DELETE /api/v1/students/deleteStudent
+
+const deleteStudent = async(req, res) => {
+    try {
+        const resultDeleting = await studentsService.deleteStudent(req);
+
+        if(resultDeleting.success) {
+            return modelsResponse.response(res, 200, resultDeleting.message);
+        }
+        else {
+            return modelsResponse.response(res, resultDeleting.errorStatus, resultDeleting.message);
         }
     } catch(error) {
         return modelsResponse.response(res, 500, error.message);
@@ -118,5 +136,6 @@ module.exports = {
     getInfoStudent,
     updateInfoStudent,
     getAllStudents,
+    deleteStudent,
     registerSubject
 }

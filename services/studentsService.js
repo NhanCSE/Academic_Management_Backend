@@ -78,7 +78,13 @@ const getInfoStudent = async(req) => {
     };
 }
 
-const getAllStudents = async() => {
+const getAllStudents = async(req) => {
+    if(req.user.role != "Quản trị viên") {
+        return {
+            success: true,
+            message: 'Người dùng không có quyền truy cập thông tin này!'
+        }
+    }
     const getStudent = await Students.getAllStudents();
 
     if(!getStudent.success){
@@ -116,6 +122,35 @@ const updateInfoStudent = async(req) => {
 
 }
 
+const deleteStudent = async(req) => {
+    if(req.user.role != "Quản trị viên") {
+        return {
+            success: true,
+            message: 'Người dùng không có quyền thực hiện chức năng này!'
+        }
+    }
+    const checkExist = await Students.checkExist(req.body.student_id);
+
+    if(!checkExist.success) {
+        return modelsError.error(404, checkExist.error);
+    }
+    if(checkExist.success && !checkExist.existed) {
+        return modelsError.error(404, "Không tìm thấy thông tin người dùng!");
+    }
+
+    const deletedStudent = await Students.deleteStudent(req);
+
+    if(deletedStudent.success) {
+        return {
+            success: true,
+            message: 'Xóa sinh viên mã ' + req.body.student_id + ' thành công!'
+        };
+    }
+    else {
+        return modelsError(500, deletedStudent.error);
+    }
+}
+
 const registerSubject = async(req) => {
     const checkExist = await Students.checkExist(req.user.student_id)
 
@@ -144,5 +179,6 @@ module.exports = {
     getInfoStudent,
     updateInfoStudent,
     getAllStudents,
+    deleteStudent,
     registerSubject
 }

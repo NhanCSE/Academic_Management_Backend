@@ -58,7 +58,7 @@ router.post("/createSubject", studentsController.createSubject);
 router.get("/getInfoStudent", studentsController.getInfoStudent);
 router.get("/getAllStudents", studentsController.getAllStudents);
 router.put("/updateInfoStudent", studentsController.updateInfoStudent);
-
+router.delete("/deleteStudent", studentsController.deleteStudent);
 router.post("/registerSubject", studentsController.registerSubject);
 
 module.exports = router;
