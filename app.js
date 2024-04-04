@@ -81,6 +81,30 @@ passport.deserializeUser((user, done) => {
 });
 
 
+
+app.use("/get_session", (req, res) => {
+	console.log(req.user);
+	res.status(200).json({
+		error: false,
+		message: "Lấy phiên đăng nhập thành công.",
+	});
+});
+app.get("/destroy_session", (req, res) => {
+	req.logout(() => {
+		req.session.destroy();
+	});
+	return res.status(200).json({
+		error: false,
+		message: "Hủy phiên hoạt động thành công.",
+	});
+});
+
+passport.serializeUser(auth.setSession);
+passport.deserializeUser((user, done) => {
+	auth.verifyPermission(user, done);
+});
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
