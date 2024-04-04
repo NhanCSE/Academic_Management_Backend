@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "fullname": "Trần Thế Nhân",
-    "student_id": "2212386",
+    "student_id": "2212383",
     "gender": "male",
     "credential_id": "089204006685",
     "phone_number": "0787919942",

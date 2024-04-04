@@ -17,7 +17,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 const studentsRoute = require("./routes/studentsRoute");
-
+const adminsRoute = require("./routes/adminsRoute");
 
 var app = express();
 
@@ -55,7 +55,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 app.use("/api/v1/students", studentsRoute);
-
+app.use("/api/v1/admins", adminsRoute);
 
 
 app.use("/get_session", (req, res) => {

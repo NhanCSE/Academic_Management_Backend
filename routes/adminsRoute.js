@@ -3,8 +3,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 const auth = require("../lib/auth");
-const studentsController = require("../controllers/studentsController");
-const Students = require("../database/Students");
+const adminsController = require("../controllers/adminsController");
+const Admins = require("../database/Admins");
 const router = express.Router();
 
 const sessionStrategy = new LocalStrategy({
@@ -13,24 +13,24 @@ const sessionStrategy = new LocalStrategy({
 }, async (username, password, done) => {
     try {
         console.log(username, password);
-        const Student = await Students.getOneStudent({ username: username });
+        const Admin = await Admins.getOneAdmin({ username: username });
 
-        if (!Student) {
+        if (!Admin) {
             done(null, false);
         }
-        const passwordFromDatabase = Student.password;
+        const passwordFromDatabase = Admin.password;
         const match = bcrypt.compareSync(password, passwordFromDatabase);
 
         if (!match) {
             return done(null, false);
         }
 
-        const student_id = Student.student_id;
-        const role = Student.role;
+        const admin_id = Admin.admin_id;
+        const role = Admin.role;
         //const active = staff.active;
 
         return done(null, {
-            student_id,
+            admin_id,
             role,
             // active,
         });
@@ -40,21 +40,21 @@ const sessionStrategy = new LocalStrategy({
     }
 });
 
-passport.use("studentLogin", sessionStrategy);
+passport.use("adminLogin", sessionStrategy);
 
-router.post("/login", passport.authenticate("studentLogin"), (req, res, next) => {
-    passport.authenticate("studentLogin", (err, user, info) => {
+router.post("/login", passport.authenticate("adminLogin"), (req, res, next) => {
+    passport.authenticate("adminLogin", (err, user, info) => {
         if (err) {
             return next(err);
         }
         if (!user) {
             return res.status(401).json({ error: true, valid: false, message: "Xác thực thất bại." });
         }
-        console.log(user);
+
         return res.status(200).json({ error: false, valid: true, message: "Xác thực thành công." });
     })(req, res, next);
 });
 
-router.post("/create", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), studentsController.createStudent);
+router.post("/create", adminsController.createAdmin);
 
 module.exports = router;
