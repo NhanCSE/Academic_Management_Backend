@@ -18,6 +18,8 @@ var usersRouter = require('./routes/users');
 
 const studentsRoute = require("./routes/studentsRoute");
 const adminsRoute = require("./routes/adminsRoute");
+const teachersRoute = require("./routes/teachersRoute");
+
 
 var app = express();
 
@@ -103,6 +105,7 @@ passport.serializeUser(auth.setSession);
 passport.deserializeUser((user, done) => {
 	auth.verifyPermission(user, done);
 });
+app.use("/api/v1/teachers", teachersRoute);
 
 
 // catch 404 and forward to error handler
