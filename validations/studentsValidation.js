@@ -1,7 +1,8 @@
 const Joi = require("joi");
+// const JoiDate = require("@hapi/joi").extend(require("@joi/date"));
 const { joiPasswordExtendCore } = require('joi-password') 
 const joiPassword = Joi.extend(joiPasswordExtendCore);
-
+// const joiDate = Joi.extend(JoiDate);
 
 class Validation {
     validateCreateStudent = (data) => {
@@ -10,14 +11,14 @@ class Validation {
             gender: Joi.string().valid("Nam", "Nữ").required(),
             date_of_birth: Joi.string().regex(new RegExp(process.env.REGEX_BIRTHDAY)).required(),
             credential_id: Joi.string().regex(new RegExp(process.env.REGEX_CCCD)).required(),
-            email: Joi.string().regex(new RegExp(process.env.REGEX_EMAIL)).required(),
+            contact_email: Joi.string().regex(new RegExp(process.env.REGEX_EMAIL)).required(),
             phone_number: Joi.string().regex(new RegExp(process.env.REGEX_PHONE_NUMBER)).required(),
             address: Joi.string().required(),
-            home_class: Joi.string().regex(new RegExp(process.env.REGEX_CLASSROOM)).required(),
-            degree: Joi.string().valid("Cử nhân", "Thạc sĩ", "Tiến sĩ").required(),
-            falculty: Joi.string().required(),            
-            major: Joi.string().required(),
-            // subject: Joi.array().items(Joi.string()).required()
+            class: Joi.string().regex(new RegExp(process.env.REGEX_CLASSROOM)).required(),
+            level: Joi.string().valid("Đại học", "Cao học").required(),
+            program: Joi.string().valid("CQ", "CLC", "VHVL").required(),
+            faculty: Joi.string().required(),            
+            major: Joi.string().required()
         }).strict()
         .messages({
             "any.required": `Trường {#label} là bắt buộc.`,

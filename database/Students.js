@@ -2,9 +2,11 @@ const db = require("../firebase/firebaseConnection");
 const dbUtils = require("../lib/dbUtils");
 const studentsRef = db.collection("students");
 const Subject = db.collection("subjects");
+const modelsError = require("../models/error");
 
 const checkExist = async (studentID) => {
     try {
+        
         const query = studentsRef.where("student_id", "==", studentID);
         const querySnapshot = await query.get();
         
@@ -48,14 +50,9 @@ const checkExistSubject = async (subject_id) => {
     }
     catch(error) {
         console.error(error.message)
-        return {
-            success: false,
-            error: error.message
-        };
+        return modelsError.error(500, error.message);
     }
 }
-
-
 
 const createNewStudent = async (info) => {
     try {
@@ -65,10 +62,7 @@ const createNewStudent = async (info) => {
         };
     } catch (error) {
         console.error(error.message);
-        return {
-            success: false,
-            error: error.message
-        };
+        return modelsError.error(500, error.message);
     }
 }
 const createNewSubject = async(info) => {
@@ -86,62 +80,6 @@ const createNewSubject = async(info) => {
     }
 }
 
-const getInfoStudent = async(req) => {
-    try {
-        console.log(req.user)
-        const query = studentsRef.where("student_id","==",req.user.student_id);
-        const querySnapshot = await query.get();
-        var data = {}
-        querySnapshot.forEach((doc) => {
-            // Lấy dữ liệu từ mỗi document
-            data = doc.data();
-        });
-
-        if(querySnapshot.empty) {
-            return {
-                success: true,
-                existed: false
-            };
-        }
-        else {
-            return {
-                success: true,
-                existed: true,
-                data: data
-            };
-        }
-    } catch(error) {
-        console.error(error.message);
-        return {
-            success: false,
-            error: error.message
-        };
-    }
-}
-
-// Lấy thông tin tất cả sinh viên cho quản trị viên
-const getAllStudents = async() => {
-    try {
-        var data = []
-        await studentsRef.get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-            data.push(doc.data())
-            });
-        });
-
-        return {
-            success: true,
-            data: data
-        };
-    } catch(error) {
-        console.error(error.message);
-        return {
-            success: false,
-            error: error.message
-        };
-    }
-}
 
 //Cập nhật thông tin sinh viên đối với Sinh viên và Quản trị viên
 const updateInfoStudent = async(req) => {
@@ -230,10 +168,48 @@ const registerSubject = async(req) => {
     }
 }
 
-const getOneStudent = async (info) => {
-    const conditionFields = Object.keys(info);
-    const conditionValues = Object.values(info);
-    return await dbUtils.findIntersect("students", conditionFields, conditionValues);
+const getOneStudent = async (condition) => {
+    try {
+        const conditionFields = Object.keys(condition);
+        const conditionValues = Object.values(condition);
+        const result = await dbUtils.findIntersect("students", conditionFields, conditionValues);
+        return {
+            success: true,
+            data: result
+        }
+    } catch (error) {
+        console.error(error.message);
+        return modelsError.error(500, error.message);
+    }
+}
+
+const getManyStudents = async (condition) => {
+    try {
+        const conditionFields = Object.keys(condition);
+        const conditionValues = Object.values(condition);
+        const result =  await dbUtils.findUnion("students", conditionFields, conditionValues);
+        
+        return {
+            success: true,
+            data: result
+        }
+    } catch (error) {
+        console.error(error.message);
+        return modelsError.error(500, error.message);
+    } 
+}
+
+const getAllStudents = async () => {
+    try {
+        const result = await dbUtils.findAll("students");
+        return {
+            success: true,
+            data: result
+        }
+    } catch (error) {
+        console.error(error.message);
+        return modelsError.error(500, error.message);
+    } 
 }
 
 
@@ -243,10 +219,10 @@ module.exports = {
     createNewStudent,
     checkExistSubject,
     createNewSubject,
-    getInfoStudent,
     updateInfoStudent,
-    getAllStudents,
     deleteStudent,
     registerSubject,
-    getOneStudent
+    getOneStudent,
+    getManyStudents,
+    getAllStudents
 }
