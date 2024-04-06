@@ -25,12 +25,12 @@ const sessionStrategy = new LocalStrategy({
 
         const student_id = Student.student_id;
         const role = Student.role;
-        //const active = staff.active;
+        const active = Student.active; // mới thêm
 
         return done(null, {
             student_id,
             role,
-            // active,
+            active, // mới thêm
         });
     } catch (error) {
         console.log(error);
@@ -61,4 +61,6 @@ router.put("/updateInfoStudent", studentsController.updateInfoStudent);
 router.delete("/deleteStudent", studentsController.deleteStudent);
 router.post("/registerSubject", studentsController.registerSubject);
 
+//Điểm
+router.get("/getScore", studentsController.getScore);
 module.exports = router;

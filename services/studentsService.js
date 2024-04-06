@@ -1,6 +1,7 @@
 const Students = require("../database/Students");
 const modelsError = require("../models/error");
 const utils = require("../lib/utils");
+var nodemailer = require("nodemailer");
 
 const generateStudentId = async() => {
     do{
@@ -24,6 +25,30 @@ const createStudent = async (info) => {
     info.username = info.email.substring(0, info.email.indexOf('@'));
     // Password ban đầu là số CCCD
     info.password = utils.hash(info.credential_id);
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'anhduy8a1vx52412312022004@gmail.com',
+          pass: 'wnpj aqhv yzvs cauk'
+        }
+      });
+      const link = "http://localhost:5000/api/v1/students/reset_password/.................."
+      var mailOptions = {
+        from: 'youremail@gmail.com',
+        to: info.email,
+        subject: 'Password of your BK account + Reset Password',
+        text: 'Vì lý do bảo mật, vui lòng không cung cấp mật khẩu này cho ai khác : ' + info.credential_id 
+        + '\nĐể thay đổi mật khẩu lần đầu, vui lòng truy cập đường link sau: ' + link,
+      };
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+
     info.active = 0;
 
     const creatingResult = await Students.createNewStudent(info);
@@ -173,6 +198,22 @@ const registerSubject = async(req) => {
     }
 }
 
+const getScore = async(req) => {
+    const checkScore = await Students.getScore(req);
+
+    if(!checkScore.success) {
+        return modelsError.error(404, checkScore.error);
+    }
+    if(checkScore.success && !checkScore.existed) {
+        return modelsError.error(404, "Không tìm thấy điểm cho học kỳ này!");
+    }
+
+    return {
+        success: true,
+        message: 'Truy vấn thông tin điểm học kỳ ' + req.body.semester + ' thành công!',
+        data: checkScore.data
+    };
+}
 module.exports = {
     createStudent,
     createSubject,
@@ -180,5 +221,6 @@ module.exports = {
     updateInfoStudent,
     getAllStudents,
     deleteStudent,
-    registerSubject
+    registerSubject,
+    getScore
 }

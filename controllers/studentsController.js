@@ -130,6 +130,21 @@ const registerSubject = async(req,res) => {
     }
 }
 
+const getScore = async(req, res) => {
+    try {
+        const resultGetting = await studentsService.getScore(req);
+
+        if(resultGetting.success) {
+            return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
+        }
+        else {
+            return modelsResponse.response(res, resultGetting.errorStatus, resultGetting.message);
+        }
+    } catch(error) {
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
 module.exports = {
     createStudent,
     createSubject,
@@ -137,5 +152,6 @@ module.exports = {
     updateInfoStudent,
     getAllStudents,
     deleteStudent,
-    registerSubject
+    registerSubject,
+    getScore
 }
