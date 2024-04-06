@@ -2,11 +2,19 @@ const studentsService = require("../services/studentsService");
 const modelsResponse = require("../models/response");
 const utils = require("../lib/utils");
 
+const studentsValidation = require("../validations/studentsValidation");
+
+const validation = new studentsValidation;
+
 //@desc  Create Student
 //@route POST /api/v1/student/create
 const createStudent = async (req, res) => {
-    //Validation and Authorization Part will sooner release
     try {
+        console.log(req.user);
+        const { error } = validation.validateCreateStudent(req.body);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
         console.log(req.user);
         //req.body.password = utils.hash(req.body.password);
         const resultCreating = await studentsService.createStudent(req.body);
@@ -45,8 +53,32 @@ const createSubject = async(req, res) => {
 
 const getInfoStudent = async(req, res) => {
     try {
-        const resultGetting = await studentsService.getInfoStudent(req);
-
+        
+        console.log(req.user);
+        let resultGetting;
+        if(req.user.role === "Sinh viên") {
+            resultGetting = await studentsService.getOneStudent({ student_id: req.user.student_id });
+            // Check if the document has a password field before removing it
+            if (resultGetting.data.hasOwnProperty('password')) {
+                delete resultGetting.data.password; // Remove the password field
+            }
+        } 
+        else if(req.user.role === "Quản trị viên") {
+            
+            if(!req.body || Object.keys(req.body).length === 0) {         
+                resultGetting = await studentsService.getAllStudents();
+            }
+            else {
+                resultGetting = await studentsService.getManyStudents(req.body);
+            }
+            if(resultGetting.data.length > 0) {
+                resultGetting.data.forEach(element => {
+                    if (element.hasOwnProperty('password')) {
+                        delete element.password; // Remove the password field
+                    }
+                });
+            }
+        }
         if(resultGetting.success) {
             return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
         }
@@ -54,24 +86,6 @@ const getInfoStudent = async(req, res) => {
             return modelsResponse.response(res, resultGetting.errorStatus, resultGetting.message);
         }
     } catch(error) {
-        return modelsResponse.response(res, 500, error.message);
-    }
-}
-
-//@desc  Get Students
-//@route GET /api/v1/students/getAllStudents
-
-const getAllStudents = async(req, res) => {
-    try {
-        const resultGetting = await studentsService.getAllStudents(req);
-
-        if(resultGetting.success) {
-            return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
-        }
-        else {
-            return modelsResponse.response(res, resultGetting.errorStatus, resultGetting.message);
-        }
-    } catch(error){
         return modelsResponse.response(res, 500, error.message);
     }
 }
@@ -150,7 +164,6 @@ module.exports = {
     createSubject,
     getInfoStudent,
     updateInfoStudent,
-    getAllStudents,
     deleteStudent,
     registerSubject,
     getScore

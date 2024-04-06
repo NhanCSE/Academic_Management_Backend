@@ -1,0 +1,20 @@
+###
+POST http://localhost:5000/api/v1/admins/create
+Content-Type: application/json
+
+{
+    "fullname": "Trần Thế Nhân",
+    "admin_id": "2210383",
+    "role": "Quản trị viên",
+    "username": "tranthenhan",
+    "password": "password"
+}
+
+###
+POST http://localhost:5000/api/v1/admins/login
+Content-Type: application/json
+
+{
+    "username": "tranthenhan",
+    "password": "password"
+}

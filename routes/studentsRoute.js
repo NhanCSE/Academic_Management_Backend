@@ -12,25 +12,25 @@ const sessionStrategy = new LocalStrategy({
     passwordField: "password",
 }, async (username, password, done) => {
     try {
-        console.log(username, password);
+        // console.log(username, password);
         const Student = await Students.getOneStudent({ username: username });
-        if (!Student) {
+        if (!Student.success) { 
             done(null, false);
         }
-        const passwordFromDatabase = Student.password;
-        const match = bcrypt.compareSync(password, passwordFromDatabase); 
+        const passwordFromDatabase = Student.data.password;
+        const match = bcrypt.compareSync(password, passwordFromDatabase);
+
         if (!match) {
             return done(null, false);
         }
 
-        const student_id = Student.student_id;
-        const role = Student.role;
-        const active = Student.active; // mới thêm
-
+        const student_id = Student.data.student_id;
+        const role = Student.data.role;
+        //const active = staff.active;
         return done(null, {
             student_id,
             role,
-            active, // mới thêm
+            //active,
         });
     } catch (error) {
         console.log(error);
@@ -38,25 +38,24 @@ const sessionStrategy = new LocalStrategy({
     }
 });
 
-passport.use("normalLogin", sessionStrategy);
+passport.use("studentLogin", sessionStrategy);
 
-router.post("/login", passport.authenticate("normalLogin"), (req, res, next) => {
-    passport.authenticate("normalLogin", (err, user, info) => {
+router.post("/login", passport.authenticate("studentLogin"), (req, res, next) => {
+    passport.authenticate("studentLogin", (err, user, info) => {
         if (err) {
             return next(err);
         }
         if (!user) {
             return res.status(401).json({ error: true, valid: false, message: "Xác thực thất bại." });
         }
-
+        console.log(user);
         return res.status(200).json({ error: false, valid: true, message: "Xác thực thành công." });
     })(req, res, next);
 });
 
 router.post("/create", studentsController.createStudent);
-router.post("/createSubject", studentsController.createSubject);
-router.get("/getInfoStudent", studentsController.getInfoStudent);
-router.get("/getAllStudents", studentsController.getAllStudents);
+// router.post("/create", studentsController.createSubject);
+router.get("/get", studentsController.getInfoStudent);
 router.put("/updateInfoStudent", studentsController.updateInfoStudent);
 router.delete("/deleteStudent", studentsController.deleteStudent);
 router.post("/registerSubject", studentsController.registerSubject);

@@ -1,27 +1,30 @@
 ###
-POST http://localhost:5000/api/v1/students/create
+POST  http://localhost:5000/api/v1/students/create
 Content-Type: application/json
 
 {
-    "fullname": "Nguyễn Anh Duy",                  //bắt buộc
-    "date_of_birth": "12-02-2004",                 //bắt buộc
-    "BHYT": "SV4798922869062",                     
-    "gender": "Nam",                               //.........
-    "credential_id": "089204017024",               //........
+    "fullname": "Nguyễn Anh Duy",                  
+    "date_of_birth": "12-02-2004",                                     
+    "gender": "Nam",                               
+    "credential_id": "089204017027",               
     "phone_number": "0394346439",                  
-    "email": "duy.nguyenanh1202@hcmut.edu.vn",     //........
-    "address": "Tỉnh An Giang",                    
-    "status": "Đang học",                          //........
-    "class": "MT22KH01",                           //........
-    "faculty": "Khoa học và Kỹ thuật máy tính",    //........
-    "major": "Khoa học máy tính",                  //........
-    "level": "Đại học",                            //........
-    "program": "Chính quy",                        //.........
-    "admission": "8-2022",                         //...........
-    "exclusion": "8-2028",                         //........
-    "role": "Sinh viên",                           //.......
+    "contact_email": "duy.nguyenanh1202@hcmut.edu.vn",     
+    "address": "Tỉnh An Giang",                                            
+    "class": "MT22KH01",                           
+    "faculty": "Khoa học và Kỹ thuật máy tính",    
+    "major": "Khoa học máy tính",                  
+    "level": "Đại học",                            
+    "program": "CQ",
+    "role": "Sinh viên"                                                                
 }
 
+###
+GET http://localhost:5000/api/v1/students/get
+Content-Type: application/json
+
+{
+                                                                           
+}
 ###
 POST http://localhost:5000/api/v1/students/login
 Content-Type: application/json
@@ -38,5 +41,20 @@ Content-Type: application/json
   "subject_id": "CO2003",
   "name": "DSA",
   "semester": "HK231",
-  "credits": "4"
+  "credits": "4",
+    "fullname": "Bùi Đức Huy",
+    "teacher_id": "2212303",
+    "gender": "male",
+    "date_of_birth": "26/09/2005",
+    "credential_id": "079111111112",
+    "phone_number": "0792222223",
+    "email": "huy.bui@hcmut.edu.vn",
+    "address": "TP Hồ Chí Minh",
+    "homeroom_class": "MT22KH05",
+    "level": "Thạc sĩ",
+    "faculty": "Khoa Khoa học và Kỹ thuật Máy tính",
+    "major": "Công nghệ thông tin",
+    "role": "Giảng viên",
+    "username": "2212364",
+    "password": "123456789"
 }

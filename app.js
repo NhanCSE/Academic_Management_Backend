@@ -17,6 +17,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 const studentsRoute = require("./routes/studentsRoute");
+const adminsRoute = require("./routes/adminsRoute");
+const teachersRoute = require("./routes/teachersRoute");
 
 
 var app = express();
@@ -55,6 +57,30 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 app.use("/api/v1/students", studentsRoute);
+app.use("/api/v1/admins", adminsRoute);
+
+
+app.use("/get_session", (req, res) => {
+	console.log(req.user);
+	res.status(200).json({
+		error: false,
+		message: "Lấy phiên đăng nhập thành công.",
+	});
+});
+app.get("/destroy_session", (req, res) => {
+	req.logout(() => {
+		req.session.destroy();
+	});
+	return res.status(200).json({
+		error: false,
+		message: "Hủy phiên hoạt động thành công.",
+	});
+});
+
+passport.serializeUser(auth.setSession);
+passport.deserializeUser((user, done) => {
+	auth.verifyPermission(user, done);
+});
 
 
 
@@ -79,6 +105,7 @@ passport.serializeUser(auth.setSession);
 passport.deserializeUser((user, done) => {
 	auth.verifyPermission(user, done);
 });
+app.use("/api/v1/teachers", teachersRoute);
 
 
 // catch 404 and forward to error handler
