@@ -82,61 +82,24 @@ const createNewSubject = async(info) => {
 
 
 //Cập nhật thông tin sinh viên đối với Sinh viên và Quản trị viên
-const updateInfoStudent = async(req) => {
-    try {
-        //const role = "Quản trị viên";
-        const newData = req.body;
-        const updateData = {
-            address: newData.address,
-            phone_number: newData.phone_number,
-        };
-
-        const query = studentsRef.where("student_id","==",req.user.student_id);
-        const querySnapshot = await query.get();
-
-        querySnapshot.forEach((doc) => {
-            
-            //Kiểm tra người dùng là quản trị viên hay sinh viên
-            if(req.user.role == "Quản trị viên"){
-                studentsRef.doc(doc.id).update(req.body)
-            }        
-            else {
-                studentsRef.doc(doc.id).update(updateData)
-            }
-        });
-        
-          return {
-            success: true
-          };
-    } catch(error) {
-        console.error(error.message);
-        return {
-            success: false,
-            error: error.message
-        };
+const updateInfoStudent = async(student_id, updatedField) => {
+    const query = {
+        field: "student_id",
+        operator: "==",
+        value: student_id
     }
+    return await dbUtils.updateOne("students", query, updatedField);
 }
 
 // 
-const deleteStudent = async(req) => {
-    try {
-        const query = studentsRef.where("student_id","==", req.body.student_id);
-        const querySnapshot = await query.get();
+const deleteStudent = async(student_id) => {
+   const query = {
+    field: "student_id",
+    operator: "==",
+    value: student_id
+   }
 
-        querySnapshot.forEach((doc) => {
-            studentsRef.doc(doc.id).delete();
-        });
-
-        return{
-            success: true
-        }
-    } catch(error) {
-        console.error(error.message);
-        return {
-            success: false,
-            error: error.message
-        };
-    }
+   return await dbUtils.deleteOne("students", query);
 }
 
 // Đăng ký học phần

@@ -56,8 +56,8 @@ router.post("/login", passport.authenticate("studentLogin"), (req, res, next) =>
 router.post("/create", studentsController.createStudent);
 // router.post("/create", studentsController.createSubject);
 router.get("/get", studentsController.getInfoStudent);
-router.put("/updateInfoStudent", studentsController.updateInfoStudent);
-router.delete("/deleteStudent", studentsController.deleteStudent);
+router.put("/update", auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), studentsController.updateInfoStudent);
+router.delete("/delete", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), studentsController.deleteStudent);
 router.post("/registerSubject", studentsController.registerSubject);
 
 module.exports = router;

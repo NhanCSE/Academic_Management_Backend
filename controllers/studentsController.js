@@ -95,7 +95,26 @@ const getInfoStudent = async(req, res) => {
 
 const updateInfoStudent = async(req, res) => {
     try {
-        const resultUpdating = await studentsService.updateInfoStudent(req);
+        const { error: conditionError } = validation.validateStudentID(req.query);
+        if(conditionError) {
+            return modelsResponse.response(res, 400, conditionError.message);
+        }
+        if(req.user.role === "Sinh viên") {
+            if(req.user.student_id !== req.query.student_id) {
+                return modelsResponse.response(res, 403, "Sinh viên không có quyền thay đổi thông tin của sinh viên khác!");
+            }
+            const { error: infoError } = validation.validateUpdateStudentByStudent(req.body);
+            if(infoError) {
+                return modelsResponse.response(res, 400, infoError.message);
+            }
+
+        } else if(req.user.role === "Quản trị viên") {
+            const { error } = validation.validateUpdateStudentByAdmin(req.body);
+            if(error) {
+                return modelsResponse.response(res, 400, error.message);
+            }
+        }
+        const resultUpdating = await studentsService.updateInfoStudent(req.query.student_id, req.body);
 
         if(resultUpdating.success) {
             return modelsResponse.response(res, 200, resultUpdating.message);
@@ -113,7 +132,11 @@ const updateInfoStudent = async(req, res) => {
 
 const deleteStudent = async(req, res) => {
     try {
-        const resultDeleting = await studentsService.deleteStudent(req);
+        const { error } = validation.validateStudentID(req.query);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
+        const resultDeleting = await studentsService.deleteStudent(req.query.student_id);
 
         if(resultDeleting.success) {
             return modelsResponse.response(res, 200, resultDeleting.message);

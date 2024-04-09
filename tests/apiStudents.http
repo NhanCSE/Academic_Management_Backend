@@ -29,8 +29,8 @@ POST http://localhost:5000/api/v1/students/login
 Content-Type: application/json
 
 {
-    "username": "tranthenhan",
-    "password": "password"
+    "username": "nhan.tran24134447",
+    "password": "089204017027"
 }
 
 ###
@@ -56,4 +56,20 @@ Content-Type: application/json
     "role": "Giảng viên",
     "username": "2212364",
     "password": "123456789"
+}
+
+### update student
+PUT http://localhost:5000/api/v1/students/update?student_id=24134447
+Content-Type: application/json
+
+{
+    "contact_email": "nhan.trantheasa@gmail.com"                                                                           
+}
+
+### update student
+DELETE http://localhost:5000/api/v1/students/delete?student_id=2212389
+Content-Type: application/json
+
+{
+                                                                             
 }

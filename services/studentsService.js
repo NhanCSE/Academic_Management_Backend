@@ -177,52 +177,45 @@ const getAllStudents = async () => {
     }
 }
 
-const updateInfoStudent = async(req) => {
-    const checkExist = await Students.checkExist(req.user.student_id);
+const updateInfoStudent = async(student_id, updatedField) => {
+    const checkExist = await Students.checkExist(student_id);
 
     if(!checkExist.success) {
         return modelsError.error(404, checkExist.error);
     }
     if(checkExist.success && !checkExist.existed) {
-        return modelsError.error(404, "Không tìm thấy thông tin người dùng!");
+        return modelsError.error(404, `Không tìm thấy thông tin sinh viên có mã ${student_id}!`);
     }
 
-    const updateStudent = await Students.updateInfoStudent(req);
+    const updateStudent = await Students.updateInfoStudent(student_id , updatedField);
 
-    if(updateStudent.success) {
-        return {
-            success: true,
-            message: 'Cập nhật thông tin sinh viên mã ' + req.user.student_id + ' thành công!'
-        };
-    }
-    else {
-        return modelsError(500, updateStudent.error);
+    if(!updateStudent.success) {
+        return modelsError.error(500, updateStudent.error);
     }
 
+    return {
+        success: true,
+        message: `Cập nhật thông tin sinh viên có mã ${student_id} thành công!`
+    };
 }
 
-const deleteStudent = async(req) => {
-    if(req.user.role != "Quản trị viên") {
-        return {
-            success: true,
-            message: 'Người dùng không có quyền thực hiện chức năng này!'
-        }
-    }
-    const checkExist = await Students.checkExist(req.body.student_id);
+const deleteStudent = async(student_id) => {
+    
+    const checkExist = await Students.checkExist(student_id);
 
     if(!checkExist.success) {
         return modelsError.error(404, checkExist.error);
     }
     if(checkExist.success && !checkExist.existed) {
-        return modelsError.error(404, "Không tìm thấy thông tin người dùng!");
+        return modelsError.error(404, `Không tìm thấy thông tin sinh viên có mã ${student_id}!`);
     }
 
-    const deletedStudent = await Students.deleteStudent(req);
+    const deletedStudent = await Students.deleteStudent(student_id);
 
     if(deletedStudent.success) {
         return {
             success: true,
-            message: 'Xóa sinh viên mã ' + req.body.student_id + ' thành công!'
+            message: 'Xóa sinh viên mã ' + student_id + ' thành công!'
         };
     }
     else {
