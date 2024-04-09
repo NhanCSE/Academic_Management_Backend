@@ -10,13 +10,11 @@ const validation = new studentsValidation;
 //@route POST /api/v1/student/create
 const createStudent = async (req, res) => {
     try {
-        console.log(req.user);
         const { error } = validation.validateCreateStudent(req.body);
         if(error) {
             return modelsResponse.response(res, 400, error.message);
         }
-        console.log(req.user);
-        //req.body.password = utils.hash(req.body.password);
+
         const resultCreating = await studentsService.createStudent(req.body);
         
         if(resultCreating.success) {
@@ -113,6 +111,10 @@ const updateInfoStudent = async(req, res) => {
             if(error) {
                 return modelsResponse.response(res, 400, error.message);
             }
+
+            if(req.body.hasOwnProperty("password")) {
+                req.body.password = utils.hash(req.body.password);
+            }
         }
         const resultUpdating = await studentsService.updateInfoStudent(req.query.student_id, req.body);
 
@@ -167,11 +169,31 @@ const registerSubject = async(req,res) => {
     }
 }
 
+const updatePassword = async(req, res) => {
+    try {
+        const { error } = validation.validateUpdatePassword(req.body);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
+        const resultUpdatingPassword = await studentsService.updatePassword(req.body);
+
+        if(resultUpdatingPassword.success) {
+            return modelsResponse.response(res, 200, resultUpdatingPassword.message);
+        }
+        else {
+            return modelsResponse.response(res, resultUpdatingPassword.errorStatus, resultUpdatingPassword.message);
+        }
+    } catch (error) {
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
 module.exports = {
     createStudent,
     createSubject,
     getInfoStudent,
     updateInfoStudent,
     deleteStudent,
-    registerSubject
+    registerSubject,
+    updatePassword
 }

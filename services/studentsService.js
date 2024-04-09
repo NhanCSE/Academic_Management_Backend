@@ -1,5 +1,6 @@
 const Students = require("../database/Students");
 const modelsError = require("../models/error");
+const bcrypt = require("bcrypt");
 const utils = require("../lib/utils");
 const moment = require("moment");
 
@@ -63,7 +64,7 @@ const createStudent = async (info) => {
         return modelsError.error(404, checkExist.error);
     }
     if(checkExist.success && checkExist.existed) {
-        return modelsError.error(404, "Sinh viên đã tồn tại từ trước!")
+        return modelsError.error(409, "Sinh viên đã tồn tại từ trước!")
     }
 
     // Xử lí thời hạn học tập
@@ -245,6 +246,38 @@ const registerSubject = async(req) => {
     }
 }
 
+const updatePassword = async(info) => {
+
+    const Student = await Students.getOneStudent({ username: info.username });
+    if(!Student.data || Student.data.length === 0) {
+        return modelsError.error(404, `Sinh viên có tài khoản ${info.username} không tồn tại!`);
+    }
+
+    const match = bcrypt.compareSync(info.password, Student.data.password);
+
+    if (!match) {
+        return modelsError.error(409, "Mật khẩu không đúng!");
+    }
+
+    const updatedField = {
+        password: utils.hash(info.new_password),
+        active: 1
+    }
+
+    const resultUpdatingStudent = await updateInfoStudent(Student.data.student_id, updatedField);
+    if(!resultUpdatingStudent.success) {
+        return modelsError.error(500, resultUpdatingStudent.error);
+    }
+
+    return {
+        success: true,
+        message: `Cập nhật thông tin sinh viên có mã ${Student.data.student_id} thành công!`
+    };
+
+}
+
+
+
 module.exports = {
     createStudent,
     createSubject,
@@ -254,4 +287,5 @@ module.exports = {
     updateInfoStudent,
     deleteStudent,
     registerSubject,
+    updatePassword,
 }

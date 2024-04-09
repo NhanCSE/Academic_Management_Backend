@@ -30,7 +30,7 @@ Content-Type: application/json
 
 {
     "username": "nhan.tran24134447",
-    "password": "089204017027"
+    "password": "Nhan@tran24134447"
 }
 
 ###
@@ -72,4 +72,14 @@ Content-Type: application/json
 
 {
                                                                              
+}
+
+### update student
+PUT http://localhost:5000/api/v1/students/update_password
+Content-Type: application/json
+
+{
+    "username": "nhan.tran24134447",
+    "password": "089204017027",
+    "new_password": "Nhan@tran24134447"                                                                           
 }
