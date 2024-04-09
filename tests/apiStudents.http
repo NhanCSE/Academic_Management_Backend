@@ -6,15 +6,15 @@ Content-Type: application/json
     "fullname": "Nguyễn Anh Duy",                  
     "date_of_birth": "12-02-2004",                                     
     "gender": "Nam",                               
-    "credential_id": "089204017027",               
-    "phone_number": "0394346439",                  
-    "contact_email": "duy.nguyenanh1202@hcmut.edu.vn",     
+    "credential_id": "089204006686",               
+    "phone_number": "0787919942",                  
+    "contact_email": "nhan.tranthek22cs@hcmut.edu.vn",     
     "address": "Tỉnh An Giang",                                            
     "class": "MT22KH01",                           
     "faculty": "Khoa học và Kỹ thuật máy tính",    
     "major": "Khoa học máy tính",                  
     "level": "Đại học",                            
-    "program": "CQ"                                                                        
+    "program": "CQ"                                                               
 }
 
 ###

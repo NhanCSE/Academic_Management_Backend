@@ -3,6 +3,7 @@ const modelsError = require("../models/error");
 const bcrypt = require("bcrypt");
 const utils = require("../lib/utils");
 const moment = require("moment");
+var nodemailer = require("nodemailer");
 
 const generateStudentId = async(suffix) => {
     let student_id;
@@ -99,12 +100,37 @@ const createStudent = async (info) => {
     info.email = info.username + "@hcmut.edu.vn";
     // Password ban đầu là số CCCD
     info.password = utils.hash(info.credential_id);
-    info.status = "Đang học";
-    info.role = "Sinh viên";
     info.active = 0;
 
     const creatingResult = await Students.createNewStudent(info);
     if(creatingResult.success) {
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'anhduy8a1vx52412312022004@gmail.com',
+              pass: 'rqbn psax tpfh yxji'
+                // user: 'nhantranibm5100@gmail.com',
+                // pass: 'dtzd zgdx lcrr ieej'
+            }
+          });
+          const link = "http://localhost:5000/api/v1/students/reser_password/........"
+          var mailOptions = {
+            from: 'youremail@gmail.com',
+            to: info.contact_email,
+            subject: 'Reset Password',
+            text: 'Tài khoản của bạn được tạo thành công với thông tin người dùng được cung cấp bên dưới'
+            + '\nUsername: ' + info.username 
+            + '\nPassword: ' + info.credential_id 
+            + '\nĐể đổi mật khẩu vui lòng truy cập đường link sau: ' + link,
+          };
+          
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+            }
+          });
         return {
             success: true,
             message: `Tạo sinh viên mã ${info.student_id} thành công!`
@@ -278,6 +304,22 @@ const updatePassword = async(info) => {
 
 
 
+const getScore = async(req) => {
+    const checkScore = await Students.getScore(req);
+
+    if(!checkScore.success) {
+        return modelsError.error(404, checkScore.error);
+    }
+    if(checkScore.success && !checkScore.existed) {
+        return modelsError.error(404, "Không tìm thấy điểm cho học kỳ này!");
+    }
+
+    return {
+        success: true,
+        message: 'Truy vấn thông tin điểm học kỳ ' + req.body.semester + ' thành công!',
+        data: checkScore.data
+    };
+}
 module.exports = {
     createStudent,
     createSubject,
@@ -288,4 +330,5 @@ module.exports = {
     deleteStudent,
     registerSubject,
     updatePassword,
+    getScore
 }

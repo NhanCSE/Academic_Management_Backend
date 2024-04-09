@@ -62,4 +62,6 @@ router.post("/registerSubject", studentsController.registerSubject);
 router.put("/update_password", studentsController.updatePassword);
 
 
+//Điểm
+//router.get("/getScore", studentsController.getScore);
 module.exports = router;
