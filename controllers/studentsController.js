@@ -171,7 +171,7 @@ const registerSubject = async(req,res) => {
 
 const getScore = async(req, res) => {
     try {
-        const resultGetting = await studentsService.getScore(req);
+        const resultGetting = await studentsService.getScore(req.body, req.user);
 
         if(resultGetting.success) {
             return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
@@ -210,5 +210,6 @@ module.exports = {
     updateInfoStudent,
     deleteStudent,
     registerSubject,
-    updatePassword
+    updatePassword,
+    getScore
 }

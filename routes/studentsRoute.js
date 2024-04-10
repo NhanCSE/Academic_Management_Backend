@@ -63,5 +63,5 @@ router.put("/update_password", studentsController.updatePassword);
 
 
 //Điểm
-//router.get("/getScore", studentsController.getScore);
+router.get("/getScore", studentsController.getScore);
 module.exports = router;

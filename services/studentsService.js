@@ -303,8 +303,8 @@ const updatePassword = async(info) => {
 
 
 
-const getScore = async(req) => {
-    const checkScore = await Students.getScore(req);
+const getScore = async(info, user) => {
+    const checkScore = await Students.getScore(info, user);
 
     if(!checkScore.success) {
         return modelsError.error(404, checkScore.error);
@@ -315,7 +315,7 @@ const getScore = async(req) => {
 
     return {
         success: true,
-        message: 'Truy vấn thông tin điểm học kỳ ' + req.body.semester + ' thành công!',
+        message: 'Truy vấn thông tin điểm học kỳ ' + info.semester + ' thành công!',
         data: checkScore.data
     };
 }

@@ -199,16 +199,16 @@ const getAllStudents = async () => {
     } 
 }
 
-const getScore = async(req) => {
+const getScore = async(info, user) => {
     try{
         var data = []
         var check = true
-        const query = studentsRef.where("student_id","==", req.user.student_id);
+        const query = studentsRef.where("student_id","==", user.student_id);
         const querySnapshot = await query.get();
 
         //Lấy dữ liệu điểm tất cả môn học trong học kỳ
         for (const doc of querySnapshot.docs) {
-            const querySubject = studentsRef.doc(doc.id).collection("Học Phần").where("semester", "==", req.body.semester);
+            const querySubject = studentsRef.doc(doc.id).collection("Học Phần").where("semester", "==", info.semester);
             const querySubjectSnapshot = await querySubject.get();
             if(querySubjectSnapshot.empty) check = false;
             querySubjectSnapshot.forEach((doc) => {
