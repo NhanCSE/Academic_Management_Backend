@@ -254,22 +254,21 @@ const deleteStudent = async(req) => {
     }
 }
 
-const registerSubject = async(req) => {
-    const checkExist = await Students.checkExist(req.user.student_id)
+//
+const registerSubject = async(info, user) => {
 
-    if(!checkExist.success) {
-        return modelsError.error(404, checkExist.error);
-    }
-    if(checkExist.success && !checkExist.existed) {
-        return modelsError.error(404, "Không tìm thấy thông tin sinh viên!");
-    }
-
-    const checkRegister = await Students.registerSubject(req);
-    if(checkRegister.success) {
+    const checkRegister = await Students.registerSubject(info, user);
+    if(checkRegister.success && checkRegister.valid) {
         return {
             success: true,
             message: 'Đăng ký môn học thành công'
         };
+    }
+    else if(checkRegister.success && !checkRegister.valid) {
+        return {
+            success: true,
+            message: 'Đăng ký môn học thất bại. Không đáp ứng môn học tiên quyết'
+        }
     }
     else {
         return modelsError.error(500, checkRegister.error);

@@ -131,7 +131,7 @@ const deleteStudent = async(req, res) => {
 
 const registerSubject = async(req,res) => {
     try {
-        const resultRegistering = await studentsService.registerSubject(req);
+        const resultRegistering = await studentsService.registerSubject(req.body, req.user);
 
         if(resultRegistering.success) {
             return modelsResponse.response(res, 200, resultRegistering.message);

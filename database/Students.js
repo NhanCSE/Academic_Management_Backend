@@ -1,8 +1,10 @@
 const db = require("../firebase/firebaseConnection");
 const dbUtils = require("../lib/dbUtils");
 const studentsRef = db.collection("students");
-const Subject = db.collection("subjects");
+//const Subject = db.collection("subjects");
+const coursesRef = db.collection("courses")
 const modelsError = require("../models/error");
+const admin = require('firebase-admin');
 
 const checkExist = async (studentID) => {
     try {
@@ -67,7 +69,7 @@ const createNewStudent = async (info) => {
 }
 const createNewSubject = async(info) => {
     try {
-        await Subject.add(info);
+        await coursesRef.add(info);
         return {
             success: true
         };
@@ -139,24 +141,45 @@ const deleteStudent = async(req) => {
 }
 
 // Đăng ký học phần
-const registerSubject = async(req) => {
+const registerSubject = async(info, user) => {
     try {
-        const query = studentsRef.where("student_id","==", req.user.student_id);
-        const querySnapshot = await query.get();
-
+        const Student = await getOneStudent({student_id: user.student_id});
         const data = {
-            subject_id: req.body.subject_id,
-            name: req.body.name,
-            semester: req.body.semester,
-            credits: req.body.credits
+            course_id: info.course_id,
+            course_name: info.course_name,
+            semester: info.semester,
+            credits: info.credits,
+            class_id: info.class_id
         };
 
-        querySnapshot.forEach((doc) => {
-            studentsRef.doc(doc.id).collection("Học Phần").add(data);
-        });
+        var course = await dbUtils.findIntersect("courses", Object.keys({course_id: info.course_id}), Object.values({course_id: info.course_id}));
+        var course_condition = course.course_condition; //Danh sách môn học tiên quyết
+        
+        var valid = true;
+        //Kiểm tra môn học tiên quyết
+        for(let x of course_condition) {
+            const Subject = await dbUtils.findIntersect("students/" + Student.data.id + "/Học Phần", Object.keys({course_id: x}), Object.values({course_id: x}));
+            if(Subject == null) {
+                valid = false
+                break
+            }
+            else if(Subject.passed == false) {
+                valid = false
+                break
+            }
+        }
+
+        var Class = await dbUtils.findIntersect("courses/" + course.id + "/Class", Object.keys({class_id: info.class_id}), Object.values({class_id: info.class_id}));
+        if(valid) {
+            studentsRef.doc(Student.data.id).collection("Học Phần").add(data);
+            coursesRef.doc(course.id).collection("Class").doc(Class.id).update({
+                students: admin.firestore.FieldValue.arrayUnion(db.collection("students").doc(Student.data.id))
+            });
+        }
 
         return {
-            success: true
+            success: true,
+            valid: valid
         };
     } catch(error) {
         console.error(error.message);
@@ -227,8 +250,8 @@ const getScore = async(req) => {
             if(querySubjectSnapshot.empty) check = false;
             querySubjectSnapshot.forEach((doc) => {
                 var score = {
-                    subject_id: doc.data().subject_id !== undefined ? doc.data().subject_id : null,
-                    subject_name: doc.data().name !== undefined ? doc.data().name : null,
+                    course_id: doc.data().course_id !== undefined ? doc.data().course_id : null,
+                    course_name: doc.data().course_name !== undefined ? doc.data().course_name : null,
                     credits: doc.data().credits !== undefined ? doc.data().credits : null,
                     exercise_score: doc.data().exercise_score !== undefined ? doc.data().exercise_score : null,
                     assignment_score: doc.data().assignment_score !== undefined ? doc.data().assignment_score : null,
