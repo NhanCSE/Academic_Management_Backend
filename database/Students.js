@@ -4,30 +4,10 @@ const studentsRef = db.collection("students");
 const Subject = db.collection("subjects");
 const modelsError = require("../models/error");
 
-const checkExist = async (studentID) => {
-    try {
-        
-        const query = studentsRef.where("student_id", "==", studentID);
-        const querySnapshot = await query.get();
-        
-        if (querySnapshot.empty) {
-            return {
-                success: true,
-                existed: false
-            };
-        } else {
-            return {
-                success: true,
-                existed: true
-            };
-        }
-    } catch (error) {
-        console.error(error.message);
-        return {
-            success: false,
-            error: error.message
-        };
-    }
+const checkExist = async (condition) => {
+    const conditionFields = Object.keys(condition);
+    const conditionValues = Object.values(condition);
+    return await dbUtils.checkExist("students", conditionFields, conditionValues);
 };
 
 const checkExistSubject = async (subject_id) => {

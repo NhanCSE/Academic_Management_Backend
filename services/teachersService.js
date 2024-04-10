@@ -11,7 +11,7 @@ const generateTeacherId = async(suffix) => {
     let cnt = 0;
     do{
         teacher_id = suffix + (Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000).toString();
-        check = await Teachers.checkExist(teacher_id);
+        check = await Teachers.checkExist({ teacher_id });
         cnt = cnt + 1;
         if(!check.success) {
             return modelsError.error(500, "Lỗi hệ thống cấp mã số");
@@ -149,7 +149,7 @@ const getAllTeachers = async () => {
 
 
 const updateInfoTeacher = async(teacher_id, updatingInfo) => {
-    const checkExist = await Teachers.checkExist(teacher_id);
+    const checkExist = await Teachers.checkExist({ teacher_id });
 
     if(!checkExist.success) {
         return modelsError.error(404, checkExist.error);
@@ -172,7 +172,7 @@ const updateInfoTeacher = async(teacher_id, updatingInfo) => {
 
 const deleteTeacher = async(teacher_id) => {
     
-    const checkExist = await Teachers.checkExist(teacher_id);
+    const checkExist = await Teachers.checkExist({ teacher_id });
 
     if(!checkExist.success) {
         return modelsError.error(404, checkExist.error);

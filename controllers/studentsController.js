@@ -1,7 +1,8 @@
 const studentsService = require("../services/studentsService");
 const modelsResponse = require("../models/response");
 const utils = require("../lib/utils");
-
+const fs = require("fs");
+const path = require("path");
 const studentsValidation = require("../validations/studentsValidation");
 
 const validation = new studentsValidation;
@@ -203,6 +204,66 @@ const updatePassword = async(req, res) => {
     }
 }
 
+
+const createStudentsByFile = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(404).json({
+                error: true,
+                message: "File không tồn tại.",
+            });
+        }
+
+        const folderPath = path.join("storage", "students_document", "students_temp");
+        if (!fs.existsSync(folderPath)) {
+            fs.mkdirSync(folderPath);
+        }
+        
+        const filePath = path.join(folderPath, req.file.filename);
+        if (!fs.existsSync(filePath)) {
+            return modelsResponse.response(res, 404, "Không tìm thấy file!");
+        }
+
+        const resultCheckingFileFormat = await studentsService.checkFileFormat(filePath.toString());
+        if (!resultCheckingFileFormat.valid) {
+            return modelsResponse.response(res, 400, resultCheckingFileFormat.message);
+        }
+
+        const students = await studentsService.getStudentsFromFile(filePath.toString());
+        
+        let successNumber = 0;
+        const successArray = new Array();
+        let failNumber = 0;
+        const failArray = new Array();
+        
+        for (const student of students) {
+
+            const resultCreatingNewOrder = await studentsService.createStudent(student);
+            if (!resultCreatingNewOrder.success) {
+                failNumber++;
+                failArray.push(student.credential_id);
+            }
+            else {
+                successNumber++;
+                successArray.push(student.credential_id);
+            }
+        }
+
+        fs.unlinkSync(filePath);
+        const responeData = new Object({
+            successNumber,
+            successArray,
+            failNumber,
+            failArray,
+        });
+
+        return modelsResponse.response(res, 201, `Tạo sinh viên từ file ${req.file.filename} thành công!`, responeData);
+    } catch (error) {
+        console.log(error);
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
 module.exports = {
     createStudent,
     createSubject,
@@ -210,5 +271,6 @@ module.exports = {
     updateInfoStudent,
     deleteStudent,
     registerSubject,
-    updatePassword
+    updatePassword,
+    createStudentsByFile
 }

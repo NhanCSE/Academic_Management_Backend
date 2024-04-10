@@ -4,29 +4,10 @@ const dbUtils = require("../lib/dbUtils");
 //const studentsRef = db.collection("students");
 
 
-const checkExist = async (teacherID) => {
-    try {
-        const query = teachersRef.where("teacher_id", "==", teacherID);
-        const querySnapshot = await query.get();
-        
-        if (querySnapshot.empty) {
-            return {
-                success: true,
-                existed: false
-            };
-        } else {
-            return {
-                success: true,
-                existed: true
-            };
-        }
-    } catch (error) {
-        console.error(error.message);
-        return {
-            success: false,
-            error: error.message
-        };
-    }
+const checkExist = async (condition) => {
+    const conditionFields = Object.keys(condition);
+    const conditionValues = Object.values(condition);
+    return await dbUtils.checkExist("teachers", conditionFields, conditionValues);
 };
 
 //CHỈ QUẢN TRỊ VIÊN TẠO MỚI ĐƯỢC GIẢNG VIÊN

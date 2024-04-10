@@ -4,6 +4,10 @@ const bcrypt = require("bcrypt");
 const utils = require("../lib/utils");
 const moment = require("moment");
 var nodemailer = require("nodemailer");
+const studentsValidation = require("../validations/studentsValidation");
+const fs = require("fs");
+const path = require("path");
+const ExcelJS = require("exceljs");
 
 const generateStudentId = async(suffix) => {
     let student_id;
@@ -11,7 +15,7 @@ const generateStudentId = async(suffix) => {
     let cnt = 0;
     do{
         student_id = suffix + (Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000).toString();
-        check = await Students.checkExist(student_id);
+        check = await Students.checkExist({ student_id });
         cnt = cnt + 1;
         if(!check.success) {
             return modelsError.error(500, "Lỗi hệ thống cấp mã số");
@@ -59,8 +63,9 @@ const generateUsername = (fullname, student_id) => {
 const createStudent = async (info) => {
     const admissionTime = new Date();
     const admissionMoment = moment(admissionTime);
-    const checkExist = await Students.checkExist(info.credential_id);
-    
+
+    const checkExist = await Students.checkExist({ credential_id: info.credential_id });
+
     if(!checkExist.success) {
         return modelsError.error(404, checkExist.error);
     }
@@ -205,7 +210,7 @@ const getAllStudents = async () => {
 }
 
 const updateInfoStudent = async(student_id, updatedField) => {
-    const checkExist = await Students.checkExist(student_id);
+    const checkExist = await Students.checkExist({ student_id });
 
     if(!checkExist.success) {
         return modelsError.error(404, checkExist.error);
@@ -228,7 +233,7 @@ const updateInfoStudent = async(student_id, updatedField) => {
 
 const deleteStudent = async(student_id) => {
     
-    const checkExist = await Students.checkExist(student_id);
+    const checkExist = await Students.checkExist({ student_id });
 
     if(!checkExist.success) {
         return modelsError.error(404, checkExist.error);
@@ -302,8 +307,6 @@ const updatePassword = async(info) => {
 
 }
 
-
-
 const getScore = async(req) => {
     const checkScore = await Students.getScore(req);
 
@@ -320,6 +323,120 @@ const getScore = async(req) => {
         data: checkScore.data
     };
 }
+
+const checkFileFormat = async (filename) => {
+    try {
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(filename);
+        const worksheet = workbook.getWorksheet(1);
+        const row1 = worksheet.getRow(1);
+        const headers = row1.values.filter(value => value !== null && value !== undefined && value !== '').map(value => value.toString());
+        
+        const mandatoryFields = ["STT", "fullname", "gender", "date_of_birth", "credential_id", "contact_email", "phone_number", "address", "class", "level", "program", "faculty", "major"];
+
+        const mandatoryFieldsAddress = ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1"];
+        
+        for (const cell of headers) {
+            if (!mandatoryFields.includes(cell)) {
+                return new Object({
+                    valid: false,
+                    message: `Trường "${cell}" không được cho phép.`
+                });
+            }
+        }
+
+        for (let i = 0; i < 13; i++) {
+            if (!headers.includes(mandatoryFields[i])) {
+                return new Object({
+                    valid: false,
+                    message: `Thiếu trường ${mandatoryFields[i]}.`,
+                });
+            }
+            
+            if (worksheet.getCell(mandatoryFieldsAddress[i]) != mandatoryFields[i]) {
+                return new Object({
+                    valid: false,
+                    message: `Ô ${mandatoryFieldsAddress[i]} được yêu cầu phải là trường "${mandatoryFields[i]}". Trong khi đó, ô ${mandatoryFieldsAddress[i]} của bạn là ${worksheet.getCell(mandatoryFieldsAddress[i])}.`,
+                });
+            }
+        }
+
+        const validation = new studentsValidation();
+
+        let errorFlag = false;
+        let errorMessage;
+
+        worksheet.eachRow((row, rowNumber) => {
+            if (errorFlag) {
+                return;
+            }
+
+            const rowData = new Object();
+            if (rowNumber !== 1) {
+                row.eachCell((cell, colNumber) => {
+                    if(typeof cell.value === "object") {
+                        cell.value = String(cell.value.text);
+                    }
+                    rowData[headers[colNumber - 1]] = cell.value;
+                });
+                delete rowData.STT;
+                console.log(rowData);
+                const { error } = validation.validateCreateStudent(rowData);
+                if (error) {
+                    errorMessage = `Hàng ${rowNumber} có định dạng dữ liệu không hợp lệ.
+                    Lỗi: ${error.message}.`;
+                    errorFlag = true;
+                    return;
+                }
+            }
+        });
+
+        if (errorFlag) {
+            return new Object({
+                valid: false,
+                message: errorMessage,
+            });
+        }
+
+        return new Object({
+            valid: true,
+            message: "Định dạng file hợp lệ.",
+        });
+    } catch (error) {
+        console.log(error);
+        throw new Error("Lỗi khi kiểm tra định dạng file.");
+    }
+}
+
+const getStudentsFromFile = async (filename) => {
+    try {
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(filename);
+        const worksheet = workbook.getWorksheet(1);
+        const row1 = worksheet.getRow(1);
+        const headers = row1.values.filter(value => value !== null && value !== undefined && value !== '').map(value => value.toString());
+
+        const students = new Array();
+        worksheet.eachRow((row, rowNumber) => {
+            const rowData = new Object();
+            if (rowNumber !== 1) {
+                row.eachCell((cell, colNumber) => {
+                    if(typeof cell.value === "object") {
+                        cell.value = String(cell.value.text);
+                    }
+                    rowData[headers[colNumber - 1]] = cell.value;
+                });
+                delete rowData.STT;
+                students.push(rowData);
+            }
+        });
+        return students;
+    } catch (error) {
+        console.log(error);
+        throw new Error("Lỗi khi lấy sinh viên từ file.");
+    }
+}
+
 module.exports = {
     createStudent,
     createSubject,
@@ -330,5 +447,7 @@ module.exports = {
     deleteStudent,
     registerSubject,
     updatePassword,
-    getScore
+    getScore,
+    checkFileFormat,
+    getStudentsFromFile
 }
