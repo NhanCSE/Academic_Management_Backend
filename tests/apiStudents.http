@@ -63,7 +63,7 @@ PUT http://localhost:5000/api/v1/students/update?student_id=24134447
 Content-Type: application/json
 
 {
-    "contact_email": "nhan.trantheasa@gmail.com"                                                                           
+    "contact_email": "nhan.trantheasaan@gmail.com"                                                                           
 }
 
 ### update student
