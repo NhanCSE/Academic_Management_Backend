@@ -1,5 +1,6 @@
 const db = require("../firebase/firebaseConnection");
 const teachersRef = db.collection("teachers");
+const dbUtils = require("../lib/dbUtils");
 //const studentsRef = db.collection("students");
 
 
@@ -87,6 +88,21 @@ const getInfoTeacher = async (req) => {
             success: false,
             error: error.message
         };
+    }
+}
+
+const getOneTeacher = async(condition) => {
+    try {
+        const conditionFields = Object.keys(condition);
+        const conditionValues = Object.values(condition);
+        const result = await dbUtils.findIntersect("teachers", conditionFields, conditionValues);
+        return {
+            success: true,
+            data: result
+        }
+    } catch (error) {
+        console.error(error.message);
+        return modelsError.error(500, error.message);
     }
 }
 
@@ -201,4 +217,5 @@ module.exports = {
     getInfoTeacher,
     updateInfoTeacher,
     deleteTeacher,
+    getOneTeacher
 }

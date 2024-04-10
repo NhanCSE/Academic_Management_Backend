@@ -83,24 +83,13 @@ const createNewSubject = async(info) => {
 }
 
 //Cập nhật thông tin sinh viên đối với Sinh viên và Quản trị viên
-const updateInfoStudent = async(student_id, updatedField) => {
-    const query = {
-        field: "student_id",
-        operator: "==",
-        value: student_id
-    }
-    return await dbUtils.updateOne("students", query, updatedField);
+const updateInfoStudent = async(student_id, updatingInfo) => {
+    return await dbUtils.updateOne("students", ["student_id"], [student_id], updatingInfo);
 }
 
 // 
 const deleteStudent = async(student_id) => {
-   const query = {
-    field: "student_id",
-    operator: "==",
-    value: student_id
-   }
-
-   return await dbUtils.deleteOne("students", query);
+   return await dbUtils.deleteOne("students", ["student_id"], [student_id]);
 }
 
 // Đăng ký học phần
