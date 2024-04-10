@@ -1,7 +1,64 @@
-###
-GET  http://localhost:5000/api/v1/localhost:5000/api/v1/teachers/getInfoTeacher
+
+### huy.bui52207
+POST  http://localhost:5000/api/v1/teachers/create
 Content-Type: application/json
 
 {
-    "teacher_id": "2212300"
+    "fullname": "Bùi Đức Huy",
+    "gender": "Nam",
+    "date_of_birth": "26-09-2005",
+    "credential_id": "079111111113",
+    "phone_number": "0792222223",
+    "contact_email": "nhan.tranthek22cs@hcmut.edu.vn",
+    "address": "TP Hồ Chí Minh",
+    "homeroom_class": "MT22KH05",
+    "level": "Thạc sĩ",
+    "faculty": "Khoa Khoa học và Kỹ thuật Máy tính",
+    "major": "Công nghệ thông tin",
+    "role": "Giảng viên"
+}
+### 
+POST http://localhost:5000/api/v1/teachers/login
+Content-Type: application/json
+
+{
+    "username": "huy.bui52207",
+    "password": "Huy@bui52207"
+}
+
+###
+
+GET http://localhost:5000/api/v1/teachers/get
+Content-Type: application/json
+
+{
+    
+}
+
+### 
+PUT http://localhost:5000/api/v1/teachers/update?teacher_id=GV59555
+Content-Type: application/json
+
+{
+    "contact_email": "huy.bui52207@gmail.com",
+    "address": "An Giang"
+}
+
+###
+
+DELETE http://localhost:5000/api/v1/teachers/delete?teacher_id=GV59066
+Content-Type: application/json
+
+{
+    
+}
+
+### update password
+PUT http://localhost:5000/api/v1/teachers/update_password
+Content-Type: application/json
+
+{
+    "username": "huy.bui52207",
+    "password": "huy.bui52207",
+    "new_password": "Huy@bui52207"                                                                           
 }

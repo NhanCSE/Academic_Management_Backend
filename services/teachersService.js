@@ -1,133 +1,234 @@
 const Teachers = require("../database/Teachers");
-//const Students = require("../database/Students");
+//const Teachers = require("../database/Teachers");
 const modelsError = require("../models/error");
+const nodemailer = require("nodemailer");
+const bcrypt = require("bcrypt");
+const utils = require("../lib/utils");
 
-const createTeacher = async (req) => {
+const generateTeacherId = async(suffix) => {
+    let teacher_id;
+    let check;
+    let cnt = 0;
+    do{
+        teacher_id = suffix + (Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000).toString();
+        check = await Teachers.checkExist(teacher_id);
+        cnt = cnt + 1;
+        if(!check.success) {
+            return modelsError.error(500, "Lỗi hệ thống cấp mã số");
+        }
+    } while(check.existed && cnt < 1000000);
+    if(cnt >= 1000000) {
+        return modelsError.error(400, "Quá số giảng viên cho phép");
+    }
+    return {
+        success: true,
+        teacher_id: teacher_id,
+    }
+}
 
-    if(!req.body.teacher_id){
-        return modelsError.error(404, "Không có mã số giảng viên để tạo mới");
-    }
+const generateUsername = (fullname, teacher_id) => {
+    // Convert Vietnamese characters to English
+    const vietnameseToEnglish = {
+        'á': 'a', 'à': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+        'ă': 'a', 'ắ': 'a', 'ằ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
+        'â': 'a', 'ấ': 'a', 'ầ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
+        'đ': 'd',
+        'é': 'e', 'è': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+        'ê': 'e', 'ế': 'e', 'ề': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+        'í': 'i', 'ì': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+        'ó': 'o', 'ò': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+        'ô': 'o', 'ố': 'o', 'ồ': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',
+        'ơ': 'o', 'ớ': 'o', 'ờ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
+        'ú': 'u', 'ù': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+        'ư': 'u', 'ứ': 'u', 'ừ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+        'ý': 'y', 'ỳ': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y'
+    };
+    fullname = fullname.split(" ");
+    fullname = fullname[0] + " " + fullname[fullname.length - 1];
+    const username = fullname.toLowerCase()
+                     .split(" ") // Split into array of words
+                     .map(word => word.split('') // Split word into array of characters
+                                      .map(char => vietnameseToEnglish[char] || char) // Convert each character
+                                      .join('')) // Join characters back into word
+                     .reverse() // Reverse the array (last name first)
+                     .join('.'); // Join with '.' between last name and first name
 
-    const checkExist = await Teachers.checkExist(req.body.teacher_id);
-    
-    if(!checkExist.success) {
-        return modelsError.error(404, checkExist.error);
+    // eliminate GV in teacher ID
+    console.log(teacher_id);
+    teacher_id = teacher_id.substring(2);
+    return username + teacher_id;
+}
+
+const createTeacher = async (info) => {
+
+    const resultGeneratingID = await generateTeacherId("GV");
+    if(!resultGeneratingID.success) {
+        return resultGeneratingID;
     }
-    if(checkExist.success && checkExist.existed) {
-        return modelsError.error(404, "Giảng viên đã tồn tại từ trước!")
-    }
-    
-    const creatingResult = await Teachers.createNewTeacher(req);
+    info.teacher_id = resultGeneratingID.teacher_id;
+    info.username = generateUsername(info.fullname, info.teacher_id);
+    info.password = utils.hash(info.username);
+
+    const creatingResult = await Teachers.createNewTeacher(info);
     if(creatingResult.success) {
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+            //   user: 'anhduy8a1vx52412312022004@gmail.com',
+            //   pass: 'rqbn psax tpfh yxji'
+                user: 'nhantranibm5100@gmail.com',
+                pass: 'dtzd zgdx lcrr ieej'
+            }
+          });
+          var mailOptions = {
+            from: 'youremail@gmail.com',
+            to: info.contact_email,
+            subject: 'Reset Password',
+            text: 'Tài khoản của bạn được tạo thành công với thông tin người dùng được cung cấp bên dưới'
+            + '\nUsername: ' + info.username 
+            + '\nPassword: ' + info.username 
+          };
+          
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+            }
+          });
         return {
             success: true,
-            message: `Tạo giảng viên mã ${req.body.teacher_id} thành công!`
+            message: `Tạo giảng viên mã ${info.teacher_id} thành công!`
         }
-    } 
+    }
     else {
         return modelsError.error(500, createTeacher.error);
     }
 
 }
 
-const getInfoTeacher = async(req)=>{
+const getOneTeacher = async(condition) => {
+    const result = await Teachers.getOneTeacher(condition);
 
-    if(!req.body.teacher_id){
-        return modelsError.error(404, "Không có mã số giảng viên để lấy thông tin");
+    if(!result.success) {
+        return result;
+    }
+    return {
+        success: true,
+        message: 'Truy vấn thông tin giảng viên dùng thành công!',
+        data: result.data
+    };
+}
+
+const getManyTeachers = async(condition) => {
+    const result = await Teachers.getManyTeachers(condition);
+    if(!result.success) {
+        return result;
     }
 
-    const checkExist = await Teachers.checkExist(req.body.teacher_id);
-    
-    if(!checkExist.success) {
-        return modelsError.error(404, checkExist.error);
-    }
-    if(checkExist.success && !checkExist.existed) {
-        return modelsError.error(404, "Giảng viên không tồn tại!")
-    }
-    
-    const gettingResult = await Teachers.getInfoTeacher(req);
-    if(gettingResult.success) {
-        return {
-            success: true,
-            message: `Lấy thông tin giảng viên mã ${req.body.teacher_id} thành công!`,
-            data: gettingResult.data
-        }
-    } 
-    else {
-        return modelsError.error(500, gettingResult.error);
+    return {
+        success: true,
+        message: 'Truy vấn thông tin tất cả giảng viên thành công!',
+        data: result.data
     }
 }
 
-const getAllTeacher = async(req)=>{
-
-    const gettingResult = await Teachers.getAllTeacher(req);
-    if(gettingResult.success) {
-        return {
-            success: true,
-            message: `Lấy thông tin tất cả giảng viên thành công!`,
-            data: gettingResult.data
-        }
+const getAllTeachers = async () => {
+    const result = await Teachers.getAllTeachers();
+    if(!result.success) {
+        return result;
     }
-    else {
-        return modelsError.error(500, gettingResult.error);
+    console.log(result);
+
+    return {
+        success: true,
+        message: 'Truy vấn thông tin tất cả giảng viên thành công!',
+        data: result.data
     }
 }
 
 
-const updateInfoTeacher = async (req) => {
+const updateInfoTeacher = async(teacher_id, updatingInfo) => {
+    const checkExist = await Teachers.checkExist(teacher_id);
 
-    if(!req.body.teacher_id){
-        return modelsError.error(404, "Không có mã số giảng viên để cập nhật thông tin");
-    }
-
-    const checkExist = await Teachers.checkExist(req.body.teacher_id);
-    
     if(!checkExist.success) {
         return modelsError.error(404, checkExist.error);
     }
     if(checkExist.success && !checkExist.existed) {
-        return modelsError.error(404, "Giảng viên không tồn tại!")
+        return modelsError.error(404, `Không tìm thấy thông tin giảng viên có mã ${teacher_id}!`);
     }
+
+    const result = await Teachers.updateInfoTeacher(teacher_id , updatingInfo);
+
+    if(!result.success) {
+        return modelsError.error(500, result.error);
+    }
+
+    return {
+        success: true,
+        message: `Cập nhật thông tin giảng viên có mã ${teacher_id} thành công!`
+    };
+}
+
+const deleteTeacher = async(teacher_id) => {
     
-    const updatingResult = await Teachers.updateInfoTeacher(req);
-    if(updatingResult.success) {
+    const checkExist = await Teachers.checkExist(teacher_id);
+
+    if(!checkExist.success) {
+        return modelsError.error(404, checkExist.error);
+    }
+    if(checkExist.success && !checkExist.existed) {
+        return modelsError.error(404, `Không tìm thấy thông tin giảng viên có mã ${teacher_id}!`);
+    }
+
+    const deletedTeacher = await Teachers.deleteTeacher(teacher_id);
+
+    if(deletedTeacher.success) {
         return {
             success: true,
-            message: `Cập nhật thông tin giảng viên mã ${req.body.teacher_id} thành công!`,
-        }
+            message: 'Xóa giảng viên mã ' + teacher_id + ' thành công!'
+        };
     }
     else {
-        return modelsError.error(500, updateInfoTeacher.error);
+        return modelsError(500, deletedTeacher.error);
     }
 }
 
-const deleteTeacher = async (req) => {
+const updatePassword = async(info) => {
 
-    if(!info.teacher_id){
-        return modelsError.error(404, "Không có mã số giảng viên để xóa thông tin");
+    const Teacher = await Teachers.getOneTeacher({ username: info.username });
+    if(!Teacher.data || Teacher.data.length === 0) {
+        return modelsError.error(404, `Giảng viên có tài khoản ${info.username} không tồn tại!`);
     }
 
-    const checkExist = await Teachers.checkExist(req.body.teacher_id);
-    
-    if(!checkExist.success) {
-        return modelsError.error(404, checkExist.error);
+    const match = bcrypt.compareSync(info.password, Teacher.data.password);
+
+    if (!match) {
+        return modelsError.error(409, "Mật khẩu không đúng!");
     }
-    if(checkExist.success && !checkExist.existed) {
-        return modelsError.error(404, "Giảng viên không tồn tại!")
+
+    const updatedField = {
+        password: utils.hash(info.new_password)
     }
-    
-    const deletingResult = await Teachers.deleteTeacher(req);
-    if(deletingResult.success) {
-        return {
-            success: true,
-            message: `Xóa thông giảng viên mã ${req.body.teacher_id} thành công!`,
-        }
+
+    const resultUpdatingTeacher = await updateInfoTeacher(Teacher.data.teacher_id, updatedField);
+    if(!resultUpdatingTeacher.success) {
+        return modelsError.error(500, resultUpdatingTeacher.error);
     }
-    else {
-        return modelsError.error(500, deleteTeacher.error);
-    }
+
+    return {
+        success: true,
+        message: `Cập nhật thông tin giảng viên có mã ${Teacher.data.teacher_id} thành công!`
+    };
+
 }
 
 module.exports = {
-    createTeacher, getInfoTeacher, getAllTeacher, updateInfoTeacher, deleteTeacher,
+    createTeacher, 
+    updateInfoTeacher, 
+    deleteTeacher,
+    getOneTeacher,
+    getManyTeachers,
+    getAllTeachers,
+    updatePassword
 }
