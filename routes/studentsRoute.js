@@ -26,11 +26,12 @@ const sessionStrategy = new LocalStrategy({
 
         const student_id = Student.data.student_id;
         const role = Student.data.role;
+        const active = Student.data.active;
         //const active = staff.active;
         return done(null, {
             student_id,
             role,
-            //active,
+            active,
         });
     } catch (error) {
         console.log(error);
@@ -53,13 +54,14 @@ router.post("/login", passport.authenticate("studentLogin"), (req, res, next) =>
     })(req, res, next);
 });
 
-router.post("/create", studentsController.createStudent);
-// router.post("/create", studentsController.createSubject);
-router.get("/get", studentsController.getInfoStudent);
-router.put("/updateInfoStudent", studentsController.updateInfoStudent);
-router.delete("/deleteStudent", studentsController.deleteStudent);
+router.post("/create", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), auth.isActive(), studentsController.createStudent);
+router.get("/get",auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.getInfoStudent);
+router.put("/update", auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.updateInfoStudent);
+router.delete("/delete", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), auth.isActive(), studentsController.deleteStudent);
 router.post("/registerSubject", studentsController.registerSubject);
+router.put("/update_password", studentsController.updatePassword);
+
 
 //Điểm
-router.get("/getScore", studentsController.getScore);
+//router.get("/getScore", studentsController.getScore);
 module.exports = router;

@@ -10,13 +10,11 @@ const validation = new studentsValidation;
 //@route POST /api/v1/student/create
 const createStudent = async (req, res) => {
     try {
-        console.log(req.user);
         const { error } = validation.validateCreateStudent(req.body);
         if(error) {
             return modelsResponse.response(res, 400, error.message);
         }
-        console.log(req.user);
-        //req.body.password = utils.hash(req.body.password);
+
         const resultCreating = await studentsService.createStudent(req.body);
         
         if(resultCreating.success) {
@@ -95,7 +93,30 @@ const getInfoStudent = async(req, res) => {
 
 const updateInfoStudent = async(req, res) => {
     try {
-        const resultUpdating = await studentsService.updateInfoStudent(req);
+        const { error: conditionError } = validation.validateStudentID(req.query);
+        if(conditionError) {
+            return modelsResponse.response(res, 400, conditionError.message);
+        }
+        if(req.user.role === "Sinh viên") {
+            if(req.user.student_id !== req.query.student_id) {
+                return modelsResponse.response(res, 403, "Sinh viên không có quyền thay đổi thông tin của sinh viên khác!");
+            }
+            const { error: infoError } = validation.validateUpdateStudentByStudent(req.body);
+            if(infoError) {
+                return modelsResponse.response(res, 400, infoError.message);
+            }
+
+        } else if(req.user.role === "Quản trị viên") {
+            const { error } = validation.validateUpdateStudentByAdmin(req.body);
+            if(error) {
+                return modelsResponse.response(res, 400, error.message);
+            }
+
+            if(req.body.hasOwnProperty("password")) {
+                req.body.password = utils.hash(req.body.password);
+            }
+        }
+        const resultUpdating = await studentsService.updateInfoStudent(req.query.student_id, req.body);
 
         if(resultUpdating.success) {
             return modelsResponse.response(res, 200, resultUpdating.message);
@@ -113,7 +134,11 @@ const updateInfoStudent = async(req, res) => {
 
 const deleteStudent = async(req, res) => {
     try {
-        const resultDeleting = await studentsService.deleteStudent(req);
+        const { error } = validation.validateStudentID(req.query);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
+        const resultDeleting = await studentsService.deleteStudent(req.query.student_id);
 
         if(resultDeleting.success) {
             return modelsResponse.response(res, 200, resultDeleting.message);
@@ -159,6 +184,25 @@ const getScore = async(req, res) => {
     }
 }
 
+const updatePassword = async(req, res) => {
+    try {
+        const { error } = validation.validateUpdatePassword(req.body);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
+        const resultUpdatingPassword = await studentsService.updatePassword(req.body);
+
+        if(resultUpdatingPassword.success) {
+            return modelsResponse.response(res, 200, resultUpdatingPassword.message);
+        }
+        else {
+            return modelsResponse.response(res, resultUpdatingPassword.errorStatus, resultUpdatingPassword.message);
+        }
+    } catch (error) {
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
 module.exports = {
     createStudent,
     createSubject,
@@ -166,5 +210,5 @@ module.exports = {
     updateInfoStudent,
     deleteStudent,
     registerSubject,
-    getScore
+    updatePassword
 }

@@ -6,16 +6,15 @@ Content-Type: application/json
     "fullname": "Nguyễn Anh Duy",                  
     "date_of_birth": "12-02-2004",                                     
     "gender": "Nam",                               
-    "credential_id": "089204017027",               
-    "phone_number": "0394346439",                  
-    "contact_email": "duy.nguyenanh1202@hcmut.edu.vn",     
+    "credential_id": "089204006686",               
+    "phone_number": "0787919942",                  
+    "contact_email": "nhan.tranthek22cs@hcmut.edu.vn",     
     "address": "Tỉnh An Giang",                                            
     "class": "MT22KH01",                           
     "faculty": "Khoa học và Kỹ thuật máy tính",    
     "major": "Khoa học máy tính",                  
     "level": "Đại học",                            
-    "program": "CQ",
-    "role": "Sinh viên"                                                                
+    "program": "CQ"                                                               
 }
 
 ###
@@ -30,8 +29,8 @@ POST http://localhost:5000/api/v1/students/login
 Content-Type: application/json
 
 {
-    "username": "tranthenhan",
-    "password": "password"
+    "username": "nhan.tran24134447",
+    "password": "Nhan@tran24134447"
 }
 
 ###
@@ -57,4 +56,30 @@ Content-Type: application/json
     "role": "Giảng viên",
     "username": "2212364",
     "password": "123456789"
+}
+
+### update student
+PUT http://localhost:5000/api/v1/students/update?student_id=24134447
+Content-Type: application/json
+
+{
+    "contact_email": "nhan.trantheasa@gmail.com"                                                                           
+}
+
+### update student
+DELETE http://localhost:5000/api/v1/students/delete?student_id=2212389
+Content-Type: application/json
+
+{
+                                                                             
+}
+
+### update student
+PUT http://localhost:5000/api/v1/students/update_password
+Content-Type: application/json
+
+{
+    "username": "nhan.tran24134447",
+    "password": "089204017027",
+    "new_password": "Nhan@tran24134447"                                                                           
 }

@@ -27,12 +27,12 @@ const sessionStrategy = new LocalStrategy({
 
         const admin_id = Admin.admin_id;
         const role = Admin.role;
-        //const active = staff.active;
+        const active = 1;
 
         return done(null, {
             admin_id,
             role,
-            // active,
+            active,
         });
     } catch (error) {
         console.log(error);
