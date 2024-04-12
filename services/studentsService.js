@@ -254,7 +254,7 @@ const deleteStudent = async(student_id) => {
 const registerSubject = async(info, user) => {
 
     const checkRegister = await Students.registerSubject(info, user);
-    if(checkRegister.success && checkRegister.valid) {
+    if(checkRegister.success && checkRegister.valid && !checkRegister.conflict) {
         return {
             success: true,
             message: 'Đăng ký môn học thành công'
@@ -263,11 +263,60 @@ const registerSubject = async(info, user) => {
     else if(checkRegister.success && !checkRegister.valid) {
         return {
             success: true,
-            message: 'Đăng ký môn học thất bại. Không đáp ứng môn học tiên quyết'
+            message: 'Đăng ký môn học thất bại. Không đáp ứng môn học tiên quyết!'
+        }
+    }
+    else if(checkRegister.success && checkRegister.conflict) {
+        return {
+            success: true,
+            message: 'Đăng ký môn học thất bại do trùng lịch học!'
         }
     }
     else {
         return modelsError.error(500, checkRegister.error);
+    }
+}
+
+const deleteRegisteredSubject = async(info, user) => {
+    const checkDelete = await Students.deleteRegisteredSubject(info, user);
+    if(checkDelete.success) {
+        return {
+            success: true,
+            message: 'Hủy đăng ký môn học mã ' + info.course_id + ' thành công!'
+        };
+    }
+    else {
+        return modelsError.error(500, checkRegister.error);
+    }
+}
+
+const getClasses = async(info) => {
+    const checkGetting = await Students.getClasses(info);
+    
+    if(checkGetting.success) {
+        return {
+            success: true,
+            message: 'Truy vấn thông tin các lớp học của mã môn học ' + info.course_id + ' thành công!',
+            data: checkGetting.data
+        };
+    } 
+    else {
+        return modelsError.error(500, checkGetting.error);
+    }
+}
+
+const getRegisteredClasses = async(user) => {
+    const checkGetting = await Students.getRegisteredClasses(user);
+    
+    if(checkGetting.success) {
+        return {
+            success: true,
+            message: 'Truy vấn thông tin các môn học đã đăng ký thành công!',
+            data: checkGetting.data
+        };
+    } 
+    else {
+        return modelsError.error(500, checkGetting.error);
     }
 }
 
@@ -328,6 +377,9 @@ module.exports = {
     updateInfoStudent,
     deleteStudent,
     registerSubject,
+    deleteRegisteredSubject,
+    getClasses,
+    getRegisteredClasses,
     updatePassword,
     getScore
 }

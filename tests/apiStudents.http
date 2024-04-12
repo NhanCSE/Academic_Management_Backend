@@ -83,3 +83,47 @@ Content-Type: application/json
     "password": "089204017027",
     "new_password": "Nhan@tran24134447"                                                                           
 }
+
+POST http://localhost:5000/api/v1/students/registerSubject
+Content-Type: application/json
+
+{
+    "course_id": "LA1005",
+    "course_name": "AV2",
+    "credits": 2,
+    "class_id": "L02",
+    "teacher": "Trần Hoàng Yến",
+    "room": "H3-506",
+    "day": "Thứ 2",
+    "period": [2,3]
+}
+
+POST http://localhost:5000/api/v1/students/registerSubject
+Content-Type: application/json
+
+{
+    "course_id": "CO2003",
+    "course_name": "DSA",
+    "credits": 4,
+    "class_id": "L01",
+    "teacher": "Saitama",
+    "room": "H6-606",
+    "day": "Thứ 2",
+    "period": [3,4,5]
+}
+
+DELETE http://localhost:5000/api/v1/students/delete_course
+Content-Type: application/json
+
+{
+    "course_id": "CO2003"
+}
+
+GET http://localhost:5000/api/v1/students/get_classes
+Content-Type: application/json
+
+{
+    "course_id": "CO2003"
+}
+
+GET http://localhost:5000/api/v1/students/get_registered_classes
