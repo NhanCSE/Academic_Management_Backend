@@ -48,8 +48,8 @@ const generateCourseId = async (info) => {
         if(!check.success) {
             return modelsError.error(500, "Lỗi hệ thống cấp mã số");
         }
-    } while(check.existed && cnt < 10000);
-    if(cnt >= 10000) {
+    } while(check.existed && cnt < 1000);
+    if(cnt >= 1000) {
         return modelsError.error(400, "Quá số môn học cho phép");
     }
     return {
@@ -59,6 +59,16 @@ const generateCourseId = async (info) => {
 }
 
 const createCourse = async (info) => {
+
+    const checkExist = await Courses.checkExist({ course_name: info.course_name });
+    if(!checkExist.success) {
+        return modelsError.error(404, checkExist.error);
+    }
+    if(checkExist.success && checkExist.existed) {
+        return modelsError.error(409, "Môn học đã tồn tại từ trước!")
+    }
+
+
     const resultGeneratingID = await generateCourseId(info);
     if(!resultGeneratingID.success) {
         return resultGeneratingID;
@@ -116,7 +126,7 @@ const updateCourse = async(course_id, updatingInfo) => {
     }
     return {
         success: true,
-        message: `Cập nhật môn học có mã ${course_id_id} thành công!`
+        message: `Cập nhật môn học có mã ${course_id} thành công!`
     };
 }
 

@@ -3,7 +3,7 @@ const modelsResponse = require("../models/response");
 
 const createCourse = async (req, res) => {
     try {
-        const resultCreating = await coursesService.createCourses(req.body);  
+        const resultCreating = await coursesService.createCourse(req.body);  
         if(resultCreating.success) {
             return modelsResponse.response(res, 200, resultCreating.message);
         } else {

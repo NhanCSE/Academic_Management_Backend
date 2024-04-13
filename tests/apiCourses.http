@@ -11,3 +11,11 @@ Content-Type: application/json
     "course_condition" : [],
     "student_condition" : 2
 }
+
+###
+GET  http://localhost:5000/api/v1/courses/get
+Content-Type: application/json
+
+{
+   
+}
