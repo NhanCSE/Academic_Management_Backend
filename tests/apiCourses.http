@@ -1,19 +1,27 @@
+
 POST  http://localhost:5000/api/v1/courses/create
 Content-Type: application/json
 
 {
-    "course_name" : "Hệ điều hành",
-    "credit" : 3,
-    "max_size" : 80,
-    "course_type" : "Chuyên ngành",
+    "course_name" : "Nhập môn lập trình",
+    "credits" : 3,
+    "course_type" : "Cơ sở",
     "major" : ["Khoa học máy tính", "Kỹ thuật máy tính"],
     "faculty" : "Khoa Khoa học và Kỹ thuật Máy tính",
     "course_condition" : [],
-    "student_condition" : 2
+    "student_condition" : 1
 }
 
 ###
 GET  http://localhost:5000/api/v1/courses/get
+Content-Type: application/json
+
+{
+   
+}
+
+###
+GET http://localhost:5000/api/v1/courses/get_classes?course_id=CS1716
 Content-Type: application/json
 
 {

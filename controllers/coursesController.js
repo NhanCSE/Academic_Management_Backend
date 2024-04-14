@@ -76,10 +76,20 @@ const deleteCourse = async(req, res) => {
     }
 }
 
+const getAllClassesInCourse = async (req, res) => {
+    try {
+        const resultGettingAllClass = await coursesService.getAllClassesInCourse(req.query.course_id);
+        return modelsResponse.response(res, 200, resultGettingAllClass.message, resultGettingAllClass);
+    } catch(error) {
+        console.log(error.message);
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
 module.exports = {
     createCourse,
     getInfoCourse,
     updateCourse,
     deleteCourse,
-
+    getAllClassesInCourse
 }

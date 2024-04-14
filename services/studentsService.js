@@ -106,6 +106,11 @@ const createStudent = async (info) => {
     // Password ban đầu là số CCCD
     info.password = utils.hash(info.credential_id);
     info.active = 0;
+    info.role = "Sinh viên";
+    info.GPA = 0.0;
+    info.credits = 0;
+    info.subject = new Array();
+
 
     const creatingResult = await Students.createNewStudent(info);
     if(creatingResult.success) {
@@ -255,25 +260,73 @@ const deleteStudent = async(student_id) => {
     }
 }
 
-const registerSubject = async(req) => {
-    const checkExist = await Students.checkExist(req.user.student_id)
+//
+const registerSubject = async(info, user) => {
 
-    if(!checkExist.success) {
-        return modelsError.error(404, checkExist.error);
-    }
-    if(checkExist.success && !checkExist.existed) {
-        return modelsError.error(404, "Không tìm thấy thông tin sinh viên!");
-    }
-
-    const checkRegister = await Students.registerSubject(req);
-    if(checkRegister.success) {
+    const checkRegister = await Students.registerSubject(info, user);
+    if(checkRegister.success && checkRegister.valid && !checkRegister.conflict) {
         return {
             success: true,
             message: 'Đăng ký môn học thành công'
         };
     }
+    else if(checkRegister.success && !checkRegister.valid) {
+        return {
+            success: true,
+            message: 'Đăng ký môn học thất bại. Không đáp ứng môn học tiên quyết!'
+        }
+    }
+    else if(checkRegister.success && checkRegister.conflict) {
+        return {
+            success: true,
+            message: 'Đăng ký môn học thất bại do trùng lịch học!'
+        }
+    }
     else {
         return modelsError.error(500, checkRegister.error);
+    }
+}
+
+const deleteRegisteredSubject = async(info, user) => {
+    const checkDelete = await Students.deleteRegisteredSubject(info, user);
+    if(checkDelete.success) {
+        return {
+            success: true,
+            message: 'Hủy đăng ký môn học mã ' + info.course_id + ' thành công!'
+        };
+    }
+    else {
+        return modelsError.error(500, checkRegister.error);
+    }
+}
+
+const getClasses = async(info) => {
+    const checkGetting = await Students.getClasses(info);
+    
+    if(checkGetting.success) {
+        return {
+            success: true,
+            message: 'Truy vấn thông tin các lớp học của mã môn học ' + info.course_id + ' thành công!',
+            data: checkGetting.data
+        };
+    } 
+    else {
+        return modelsError.error(500, checkGetting.error);
+    }
+}
+
+const getRegisteredClasses = async(user) => {
+    const checkGetting = await Students.getRegisteredClasses(user);
+    
+    if(checkGetting.success) {
+        return {
+            success: true,
+            message: 'Truy vấn thông tin các môn học đã đăng ký thành công!',
+            data: checkGetting.data
+        };
+    } 
+    else {
+        return modelsError.error(500, checkGetting.error);
     }
 }
 
@@ -283,7 +336,7 @@ const updatePassword = async(info) => {
     if(!Student.data || Student.data.length === 0) {
         return modelsError.error(404, `Sinh viên có tài khoản ${info.username} không tồn tại!`);
     }
-
+    console.log(Student.data);
     const match = bcrypt.compareSync(info.password, Student.data.password);
 
     if (!match) {
@@ -307,8 +360,10 @@ const updatePassword = async(info) => {
 
 }
 
-const getScore = async(req) => {
-    const checkScore = await Students.getScore(req);
+
+
+const getScore = async(info, user) => {
+    const checkScore = await Students.getScore(info, user);
 
     if(!checkScore.success) {
         return modelsError.error(404, checkScore.error);
@@ -319,7 +374,7 @@ const getScore = async(req) => {
 
     return {
         success: true,
-        message: 'Truy vấn thông tin điểm học kỳ ' + req.body.semester + ' thành công!',
+        message: 'Truy vấn thông tin điểm học kỳ ' + info.semester + ' thành công!',
         data: checkScore.data
     };
 }
@@ -446,6 +501,9 @@ module.exports = {
     updateInfoStudent,
     deleteStudent,
     registerSubject,
+    deleteRegisteredSubject,
+    getClasses,
+    getRegisteredClasses,
     updatePassword,
     getScore,
     checkFileFormat,

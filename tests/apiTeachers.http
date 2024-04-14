@@ -7,7 +7,7 @@ Content-Type: application/json
     "fullname": "Bùi Đức Huy",
     "gender": "Nam",
     "date_of_birth": "26-09-2005",
-    "credential_id": "079111111113",
+    "credential_id": "012111111123",
     "phone_number": "0792222223",
     "contact_email": "nhan.tranthek22cs@hcmut.edu.vn",
     "address": "TP Hồ Chí Minh",
@@ -15,15 +15,16 @@ Content-Type: application/json
     "level": "Thạc sĩ",
     "faculty": "Khoa Khoa học và Kỹ thuật Máy tính",
     "major": "Công nghệ thông tin",
-    "role": "Giảng viên"
+    "role": "Giảng viên",
+    "subject": ["CS1716", "CN2690"]
 }
 ### 
 POST http://localhost:5000/api/v1/teachers/login
 Content-Type: application/json
 
 {
-    "username": "huy.bui52207",
-    "password": "Huy@bui52207"
+    "username": "huy.bui53587",
+    "password": "huy.bui53587"
 }
 
 ###

@@ -1,4 +1,5 @@
 const Courses = require("../database/Courses");
+const Classes = require("../database/Classes");
 const modelsError = require("../models/error");
 const bcrypt = require("bcrypt");
 
@@ -81,7 +82,7 @@ const createCourse = async (info) => {
             message: `Tạo môn học mã ${info.course_id} thành công!`
         }
     }
-    else return modelsError.error(500, createCourse.error);
+    else return modelsError.error(500, createCourse.message);
 }
 
 const getManyCourses = async(condition) => {
@@ -154,11 +155,17 @@ const deleteCourse = async(course_id) => {
     }
 }
 
+const getAllClassesInCourse = async(course_id) => {
+    const course = await Courses.getOneCourse({ course_id });
+    const dbCollection = `courses/${course.data.id}/classes`;
+    return await Classes.getAllClasses(dbCollection);
+}
+
 module.exports = {
     createCourse,
     getAllCourses,
     getManyCourses,
     updateCourse,
     deleteCourse,
-    
+    getAllClassesInCourse,
 }

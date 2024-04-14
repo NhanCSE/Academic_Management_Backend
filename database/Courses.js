@@ -10,24 +10,9 @@ const checkExist = async (condition) => {
 
 const createNewCourse = async (info) => {
     try {    
-        const docRef = await coursesRef.add(info);
-        const courseId = docRef.id;
-        const classRef = docRef.collection("Class");
-        for(let i = 0; i < 5; i++){
-            await classRef.add({
-                "class_id": "",
-                "day": "",
-                "max_num_of_st": info.max_size,
-                "period": [],
-                "room": "",
-                "students": [],
-                "teacher": "",
-                "weeks": []
-            });
-        }
+        const docRef = await coursesRef.add(info);   
         return {
             success: true,
-            courseId: courseId
         };
         
     } catch (error) {
@@ -36,6 +21,20 @@ const createNewCourse = async (info) => {
             success: false,
             error: error.message
         };
+    }
+}
+const getOneCourse = async(condition) => {
+    try {
+        const conditionFields = Object.keys(condition);
+        const conditionValues = Object.values(condition);
+        const result = await dbUtils.findIntersect("courses", conditionFields, conditionValues);
+        return {
+            success: true,
+            data: result
+        }
+    } catch (error) {
+        console.error(error.message);
+        return modelsError.error(500, error.message);
     }
 }
 
@@ -61,13 +60,9 @@ const getAllCourses = async() => {
             success: true,
             data: result
         }
-    }
-    catch{
+    } catch (error) {
         console.error(error.message);
-        return {
-            success: false,
-            error: error.message
-        };
+        return modelsError.error(500, error.message);
     }
 }
 
@@ -83,6 +78,7 @@ const deleteCourse = async(course_id) => {
 module.exports = {
     checkExist,
     createNewCourse,
+    getOneCourse,
     getAllCourses,
     getManyCourses,
     updateCourse,

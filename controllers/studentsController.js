@@ -157,7 +157,7 @@ const deleteStudent = async(req, res) => {
 
 const registerSubject = async(req,res) => {
     try {
-        const resultRegistering = await studentsService.registerSubject(req);
+        const resultRegistering = await studentsService.registerSubject(req.body, req.user);
 
         if(resultRegistering.success) {
             return modelsResponse.response(res, 200, resultRegistering.message);
@@ -170,9 +170,54 @@ const registerSubject = async(req,res) => {
     }
 }
 
+const deleteRegisteredSubject = async(req, res) => {
+    try {
+        const resultDeleting = await studentsService.deleteRegisteredSubject(req.body, req.user);
+
+        if(resultDeleting.success) {
+            return modelsResponse.response(res, 200, resultDeleting.message);
+        }
+        else {
+            return modelsResponse.response(res, resultDeleting.errorStatus, resultDeleting.message);
+        }
+    } catch(error) {
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
+const getClasses = async(req, res) => {
+    try {
+        const resultGetting = await studentsService.getClasses(req.body);
+        
+        if(resultGetting.success) {
+            return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
+        }
+        else {
+            return modelsResponse.response(res, resultGetting.errorStatus, resultGetting.message);
+        }
+    } catch(error) {
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
+const getRegisteredClasses = async(req, res) => {
+    try {
+        const resultGetting = await studentsService.getRegisteredClasses(req.user);
+        
+        if(resultGetting.success) {
+            return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
+        }
+        else {
+            return modelsResponse.response(res, resultGetting.errorStatus, resultGetting.message);
+        }
+    } catch(error) {
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
 const getScore = async(req, res) => {
     try {
-        const resultGetting = await studentsService.getScore(req);
+        const resultGetting = await studentsService.getScore(req.body, req.user);
 
         if(resultGetting.success) {
             return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
@@ -272,5 +317,10 @@ module.exports = {
     deleteStudent,
     registerSubject,
     updatePassword,
-    createStudentsByFile
+    createStudentsByFile,
+    deleteRegisteredSubject,
+    getClasses,
+    getRegisteredClasses,
+    updatePassword,
+    getScore
 }
