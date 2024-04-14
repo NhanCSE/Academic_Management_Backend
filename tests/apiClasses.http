@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "course_id": "CS1716",
-    "program": "CQ",
+    "program": "CLC",
     "semester": "HK241",
     "day": "Thứ 4",
     "max_students": 120,
@@ -19,7 +19,7 @@ Content-Type: application/json
 
 {
     "course_id": "CS1716",
-    "class_id": "CS1716_CQ01"
+    "class_id": "CS1716_CC02"
 }
 
 ###
@@ -32,15 +32,15 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/api/v1/classes/update_score?class_id=CS1716_CQ01
+POST http://localhost:5000/api/v1/classes/update_score?class_id=CS1716_CC02
 Content-Type: application/json
 
 {
-    "student_id": "24110830",
+    "student_id": "24270958",
     "midterm": 10,
-    "final": 7.5,
-    "lab": 8.5,
-    "exercise": 10
+    "final": 10,
+    "lab": 4.5,
+    "exercise": 4
 }
 
 ###
@@ -48,6 +48,6 @@ PUT http://localhost:5000/api/v1/classes/cancel_register
 Content-Type: application/json
 
 {
-    "course_id": "CN2690",
-    "class_id": "CN2690_CC01"
+    "course_id": "CS1716",
+    "class_id": "CS1716_CQ01"
 }

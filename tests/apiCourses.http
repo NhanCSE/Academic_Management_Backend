@@ -13,7 +13,7 @@ Content-Type: application/json
 }
 
 ###
-GET  http://localhost:5000/api/v1/courses/get
+POST  http://localhost:5000/api/v1/courses/get
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:5000/api/v1/courses/get_classes?course_id=CS1716
+GET http://localhost:5000/api/v1/courses/get_classes?course_id=CN2690
 Content-Type: application/json
 
 {

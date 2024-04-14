@@ -100,7 +100,7 @@ router.post("/login", passport.authenticate("studentLogin"), (req, res, next) =>
 });
 
 router.post("/create", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), auth.isActive(), studentsController.createStudent);
-router.get("/get",auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.getInfoStudent);
+router.post("/get",auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.getInfoStudent);
 router.put("/update", auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.updateInfoStudent);
 router.delete("/delete", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), auth.isActive(), studentsController.deleteStudent);
 router.get("/get_classes",  auth.isAuthenticated(), auth.isAuthorized(["Sinh viên"]), auth.isActive(), studentsController.getClasses),

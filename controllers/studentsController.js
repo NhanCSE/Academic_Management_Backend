@@ -33,7 +33,6 @@ const createStudent = async (req, res) => {
 //@route GET /api/v1/students/getInfoStudent
 const getInfoStudent = async(req, res) => {
     try {
-        
         console.log(req.user);
         let resultGetting;
         if(req.user.role === "Sinh viên") {

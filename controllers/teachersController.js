@@ -6,6 +6,10 @@ const validation = new teacherValidation();
 
 const createTeacher = async (req, res) => {
     try {
+        const { error } = validation.validateCreateTeacher(req.body);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
         const resultCreating = await teachersService.createTeacher(req.body);  
         if(resultCreating.success) {
             return modelsResponse.response(res, 200, resultCreating.message);

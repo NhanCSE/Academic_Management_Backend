@@ -9,7 +9,8 @@ const createAdmin = async (info) => {
     if(checkExist.success && checkExist.existed) {
         return modelsError.error(404, "Sinh viên đã tồn tại từ trước!")
     }
-    
+    info.role = "Quản trị viên";
+    info.active = 1;
     const creatingResult = await Admins.createNewAdmin(info);
     if(creatingResult.success) {
         return {

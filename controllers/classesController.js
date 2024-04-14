@@ -1,9 +1,16 @@
 const coursesService = require("../services/coursesService");
 const classesService = require("../services/classesService");
 const modelsResponse = require("../models/response");
+const classesValidation = require("../validations/classesValidation");
+
+const validation = new classesValidation;
 
 const createClass = async (req, res) => {
     try {
+        const { error } = validation.validateCreateClass(req.body);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
         const resultCreating = await classesService.createClass(req.body);
         if(!resultCreating.success) {
             return modelsResponse.response(res, resultCreating.errorStatus, resultCreating.message);
@@ -17,6 +24,10 @@ const createClass = async (req, res) => {
 
 const registerClass = async (req, res) => {
     try{
+        const { error } = validation.validateRegisterClass(req.body);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
         if(req.user.role === "Sinh viên") {
             const resultRegisterClass = await classesService.registerClassForStudent(req.body, req.user.student_id);
             if(resultRegisterClass.success) {
@@ -43,6 +54,10 @@ const registerClass = async (req, res) => {
 
 const updateScore =  async (req, res) => {
     try{
+        const { error } = validation.validateUpdateScore(req.body);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
         const resultUpdateScore = await classesService.updateScore(req.body, req.query.class_id, req.user.teacher_id);
         if(!resultUpdateScore.success) {
             return modelsResponse.response(res, resultUpdateScore.errorStatus, resultUpdateScore.message);
@@ -56,6 +71,10 @@ const updateScore =  async (req, res) => {
 
 const cancelRegisterClass = async (req, res) => {
     try{
+        const { error } = validation.validateRegisterClass(req.body);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
         if(req.user.role === "Sinh viên") {
             const resultCancelRegister = await classesService.cancelRegisterForStudent(req.body, req.user.student_id);
             if(!resultCancelRegister.success) {

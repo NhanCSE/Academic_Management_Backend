@@ -1,8 +1,14 @@
 const coursesService = require("../services/coursesService");
 const modelsResponse = require("../models/response");
+const coursesValidation = require("../validations/coursesValidation");
 
+const validation = new coursesValidation;
 const createCourse = async (req, res) => {
     try {
+        const { error } = validation.validateCreateCourse(req.body);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
         const resultCreating = await coursesService.createCourse(req.body);  
         if(resultCreating.success) {
             return modelsResponse.response(res, 200, resultCreating.message);
@@ -16,6 +22,10 @@ const createCourse = async (req, res) => {
 
 const getInfoCourse = async (req, res) => {
     try {
+        const { error } = validation.validateUpdateCourse(req.body);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
         let resultGetting;
         if(!req.body || Object.keys(req.body).length === 0) {
             resultGetting = await coursesService.getAllCourses();
@@ -34,15 +44,14 @@ const getInfoCourse = async (req, res) => {
 
 const updateCourse = async(req, res) => {
     try {
-        if(req.user.role === "Quản trị viên") {
-            // const { error } = validation.validateUpdateTeacherByAdmin(req.body);
-            // if(error) {
-            //     return modelsResponse.response(res, 400, error.message);
-            // }
+        const { error: infoError } = validation.validateUpdateCourse(req.body);
+        if(infoError) {
+            return modelsResponse.response(res, 400, infoError.message);
+        }
 
-            // if(req.body.hasOwnProperty("password")) {
-            //     req.body.password = utils.hash(req.body.password);
-            // }
+        const { error: conditionError } = validation.validateCourseID(req.query);
+        if(conditionError) {
+            return modelsResponse.response(res, 400, conditionError.message);
         }
         const resultUpdating = await coursesService.updateCourse(req.query.course_id, req.body);
 
@@ -59,10 +68,10 @@ const updateCourse = async(req, res) => {
 
 const deleteCourse = async(req, res) => {
     try {
-        // const { error } = validation.validateTeacherID(req.query);
-        // if(error) {
-        //     return modelsResponse.response(res, 400, error.message);
-        // }
+        const { error } = validation.validateCourseID(req.query);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
         const resultDeleting = await coursesService.deleteCourse(req.query.course_id);
 
         if(resultDeleting.success) {
@@ -78,6 +87,10 @@ const deleteCourse = async(req, res) => {
 
 const getAllClassesInCourse = async (req, res) => {
     try {
+        const { error } = validation.validateCourseID(req.query);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
         const resultGettingAllClass = await coursesService.getAllClassesInCourse(req.query.course_id);
         return modelsResponse.response(res, 200, resultGettingAllClass.message, resultGettingAllClass);
     } catch(error) {

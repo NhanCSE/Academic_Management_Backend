@@ -3,10 +3,10 @@ POST  http://localhost:5000/api/v1/students/create
 Content-Type: application/json
 
 {
-    "fullname": "Trần Thái Hoàng",                  
+    "fullname": "Nguyễn Hoàng Long",                  
     "date_of_birth": "12-02-2004",                                     
     "gender": "Nam",                               
-    "credential_id": "089204006567",               
+    "credential_id": "089204009777",               
     "phone_number": "0787919942",                  
     "contact_email": "nhan.tranthek22cs@hcmut.edu.vn",     
     "address": "Tỉnh An Giang",                                            
@@ -14,7 +14,7 @@ Content-Type: application/json
     "faculty": "Khoa học và Kỹ thuật máy tính",    
     "major": "Khoa học máy tính",                  
     "level": "Đại học",                            
-    "program": "CQ"                                                               
+    "program": "CLC"                                                               
 }
 
 ###
@@ -34,32 +34,16 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/api/v1/students/registerSubject
+POST http://localhost:5000/api/v1/students/login
 Content-Type: application/json
+
 {
-  "subject_id": "CO2003",
-  "name": "DSA",
-  "semester": "HK231",
-  "credits": "4",
-    "fullname": "Bùi Đức Huy",
-    "teacher_id": "2212303",
-    "gender": "male",
-    "date_of_birth": "26/09/2005",
-    "credential_id": "079111111112",
-    "phone_number": "0792222223",
-    "email": "huy.bui@hcmut.edu.vn",
-    "address": "TP Hồ Chí Minh",
-    "homeroom_class": "MT22KH05",
-    "level": "Thạc sĩ",
-    "faculty": "Khoa Khoa học và Kỹ thuật Máy tính",
-    "major": "Công nghệ thông tin",
-    "role": "Giảng viên",
-    "username": "2212364",
-    "password": "123456789"
+    "username": "long.nguyen24270958",
+    "password": "Nhan@tran24134447"
 }
 
 ### update student
-PUT http://localhost:5000/api/v1/students/update?student_id=24134447
+PUT http://localhost:5000/api/v1/students/update?student_id=24270958
 Content-Type: application/json
 
 {
@@ -79,26 +63,11 @@ PUT http://localhost:5000/api/v1/students/update_password
 Content-Type: application/json
 
 {
-    "username": "hoang.tran24110830",
-    "password": "089204007739",
+    "username": "long.nguyen24270958",
+    "password": "089204009777",
     "new_password": "Nhan@tran24134447"
 }
-
 ###
-POST http://localhost:5000/api/v1/students/registerSubject
-Content-Type: application/json
-
-{
-    "course_id": "LA1005",
-    "course_name": "AV2",
-    "credits": 2,
-    "class_id": "L02",
-    "teacher": "Trần Hoàng Yến",
-    "room": "H3-506",
-    "day": "Thứ 2",
-    "period": [2,3]
-}
-
 POST http://localhost:5000/api/v1/students/registerSubject
 Content-Type: application/json
 
@@ -113,12 +82,6 @@ Content-Type: application/json
     "period": [3,4,5]
 }
 
-DELETE http://localhost:5000/api/v1/students/delete_course
-Content-Type: application/json
-
-{
-    "course_id": "CO2003"
-}
 ###
 
 GET http://localhost:5000/api/v1/students/get_classes
@@ -129,4 +92,3 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:5000/api/v1/students/get_registered_classes

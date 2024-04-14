@@ -75,6 +75,9 @@ const createCourse = async (info) => {
         return resultGeneratingID;
     }
     info.course_id = resultGeneratingID.course_id;
+    if(!info.hasOwnProperty(course_condition)) {
+        info.course_condition = new Array();
+    }
     const creatingResult = await Courses.createNewCourse(info);
     if(creatingResult.success){
         return {

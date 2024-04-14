@@ -73,7 +73,7 @@ const registerClassForStudent = async (info, student_id) => {
     // Check if student has enough standard credits to register
     // each year require 28 credits to upgrade higher year student
     // EX: First-year student have more than 28 credits will count as Second-year student
-    if(student.data.credits < course.data.student_condition * 14) {
+    if(student.data.credits < (course.data.student_condition - 1) * 14) {
         return modelsError.error(404, `Sinh viên không đủ tín chỉ để đăng kí lớp này`);
     }
 
@@ -137,7 +137,7 @@ const registerClassForTeacher = async (info, teacher_id) => {
     
     const teacher = await Teachers.getOneTeacher({ teacher_id });
     const registerClass = await Classes.getOneClass(`courses/${course.data.id}/classes`, { class_id: info.class_id });
-    if(registerClass.data.teacher.length > 0) {
+    if(registerClass.data.teacher !== null) {
         return modelsError.error(409, `Lớp học đã có giảng viên giảng dạy!`);
     }
     // Check the subject
@@ -230,7 +230,7 @@ const updateScore = async (info, class_id, teacher_id) => {
                 }
             });
         }
-        student.data.credits += course.data.credits;
+        if(GPA >= 4) student.data.credits += course.data.credits;
     }
     // calculated GPA overall
     let sumGPA = 0;
