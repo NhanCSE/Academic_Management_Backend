@@ -103,10 +103,7 @@ router.post("/create", auth.isAuthenticated(), auth.isAuthorized(["Quản trị 
 router.get("/get",auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.getInfoStudent);
 router.put("/update", auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.updateInfoStudent);
 router.delete("/delete", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), auth.isActive(), studentsController.deleteStudent);
-router.post("/registerSubject", studentsController.registerSubject);
-router.delete("/delete_course", studentsController.deleteRegisteredSubject);
-router.get("/get_classes", studentsController.getClasses),
-router.get("/get_registered_classes", studentsController.getRegisteredClasses),
+router.get("/get_classes",  auth.isAuthenticated(), auth.isAuthorized(["Sinh viên"]), auth.isActive(), studentsController.getClasses),
 router.put("/update_password", studentsController.updatePassword);
 
 router.post(
@@ -116,8 +113,4 @@ router.post(
     upload.single("file"),
     studentsController.createStudentsByFile,
 );
-
-
-//Điểm
-router.get("/getScore", studentsController.getScore);
 module.exports = router;

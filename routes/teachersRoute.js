@@ -60,4 +60,6 @@ router.get("/get", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viê
 router.put("/update", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên", "Giảng viên"]), auth.isActive(), teachersController.updateInfoTeacher);
 router.delete("/delete", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), auth.isActive(), teachersController.deleteTeacher);
 router.put("/update_password", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên", "Giảng viên"]), auth.isActive(), teachersController.updatePassword);
+router.get("/get_classes", auth.isAuthenticated(), auth.isAuthorized(["Giảng viên"]), auth.isActive(), teachersController.getClasses);
+
 module.exports = router;

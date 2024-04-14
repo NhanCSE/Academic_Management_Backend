@@ -63,3 +63,11 @@ Content-Type: application/json
     "password": "huy.bui52207",
     "new_password": "Huy@bui52207"                                                                           
 }
+
+###
+GET http://localhost:5000/api/v1/teachers/get_classes
+Content-Type: application/json
+
+{
+    
+}

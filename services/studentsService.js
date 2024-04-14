@@ -1,4 +1,5 @@
 const Students = require("../database/Students");
+const Classes = require("../database/Classes");
 const modelsError = require("../models/error");
 const bcrypt = require("bcrypt");
 const utils = require("../lib/utils");
@@ -300,35 +301,18 @@ const deleteRegisteredSubject = async(info, user) => {
     }
 }
 
-const getClasses = async(info) => {
-    const checkGetting = await Students.getClasses(info);
-    
-    if(checkGetting.success) {
-        return {
-            success: true,
-            message: 'Truy vấn thông tin các lớp học của mã môn học ' + info.course_id + ' thành công!',
-            data: checkGetting.data
-        };
-    } 
-    else {
-        return modelsError.error(500, checkGetting.error);
+const getClasses = async(student_id) => {
+    const student = await Students.getOneStudent({ student_id });
+    const dbCollection = `students/${student.data.id}/classes`;
+    const result = await Classes.getAllClasses(dbCollection);
+    return {
+        success: true,
+        data: result,
+        message: "Truy vấn lớp cho sinh viên thành công"
     }
 }
 
-const getRegisteredClasses = async(user) => {
-    const checkGetting = await Students.getRegisteredClasses(user);
-    
-    if(checkGetting.success) {
-        return {
-            success: true,
-            message: 'Truy vấn thông tin các môn học đã đăng ký thành công!',
-            data: checkGetting.data
-        };
-    } 
-    else {
-        return modelsError.error(500, checkGetting.error);
-    }
-}
+
 
 const updatePassword = async(info) => {
 
@@ -503,7 +487,6 @@ module.exports = {
     registerSubject,
     deleteRegisteredSubject,
     getClasses,
-    getRegisteredClasses,
     updatePassword,
     getScore,
     checkFileFormat,

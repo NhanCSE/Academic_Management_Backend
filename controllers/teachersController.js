@@ -128,11 +128,23 @@ const updatePassword = async(req, res) => {
     }
 }
 
+const getClasses = async (req, res) => {
+    try {
+        const resultGettingClasses = await teachersService.getClasses(req.user.teacher_id);
+        if(!resultGettingClasses.success) {
+            return resultGettingClasses;
+        }
+        return modelsResponse.response(res, 200, resultGettingClasses.message, resultGettingClasses.data);
+    } catch (error) {
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
 
 module.exports = {
     createTeacher, 
     getInfoTeacher, 
     updateInfoTeacher, 
     deleteTeacher,
-    updatePassword
+    updatePassword,
+    getClasses
 }

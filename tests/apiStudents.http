@@ -119,12 +119,14 @@ Content-Type: application/json
 {
     "course_id": "CO2003"
 }
+###
 
 GET http://localhost:5000/api/v1/students/get_classes
 Content-Type: application/json
 
 {
-    "course_id": "CO2003"
+    
 }
 
+###
 GET http://localhost:5000/api/v1/students/get_registered_classes

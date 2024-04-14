@@ -1,9 +1,11 @@
 const Teachers = require("../database/Teachers");
+const Classes = require("../database/Classes");
 //const Teachers = require("../database/Teachers");
 const modelsError = require("../models/error");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const utils = require("../lib/utils");
+const { messaging } = require("firebase-admin");
 
 const generateTeacherId = async(suffix) => {
     let teacher_id;
@@ -223,6 +225,17 @@ const updatePassword = async(info) => {
 
 }
 
+const getClasses = async(teacher_id) => {
+    const teacher = await Teachers.getOneTeacher({ teacher_id });
+    const dbCollection = `teachers/${teacher.data.id}/classes`;
+    const result = await Classes.getAllClasses(dbCollection);
+    return {
+        success: true,
+        data: result,
+        message: "Truy vấn lớp học cho giảng viên thành công"
+    }
+}
+
 module.exports = {
     createTeacher, 
     updateInfoTeacher, 
@@ -230,5 +243,6 @@ module.exports = {
     getOneTeacher,
     getManyTeachers,
     getAllTeachers,
-    updatePassword
+    updatePassword,
+    getClasses
 }

@@ -29,27 +29,8 @@ const createStudent = async (req, res) => {
     
 }
 
-//@desc  Create Subject
-//@route POST /api/v1/students/createSubject
-
-const createSubject = async(req, res) => {
-    try {
-        const resultCreating = await studentsService.createSubject(req.body);
-
-        if(resultCreating.success) {
-            return modelsResponse.response(res, 200, resultCreating.message);
-        } 
-        else {
-            return modelsResponse.response(res, resultCreating.errorStatus, resultCreating.message);
-        }
-    } catch(error) {
-        return modelsResponse.response(res, 500, error.message);
-    }
-}
-
 //@desc  Get Student
 //@route GET /api/v1/students/getInfoStudent
-
 const getInfoStudent = async(req, res) => {
     try {
         
@@ -91,7 +72,6 @@ const getInfoStudent = async(req, res) => {
 
 //@desc  Update Student
 //@route PUT /api/v1/students/updateInfoStudent
-
 const updateInfoStudent = async(req, res) => {
     try {
         const { error: conditionError } = validation.validateStudentID(req.query);
@@ -152,73 +132,11 @@ const deleteStudent = async(req, res) => {
     }
 }
 
-//@desc  Register Subject
-//@route POST /api/v1/students/registerSubject
-
-const registerSubject = async(req,res) => {
-    try {
-        const resultRegistering = await studentsService.registerSubject(req.body, req.user);
-
-        if(resultRegistering.success) {
-            return modelsResponse.response(res, 200, resultRegistering.message);
-        }
-        else {
-            return modelsResponse.response(res, resultRegistering.errorStatus, resultRegistering.message);
-        }
-    } catch(error) {
-        return modelsResponse.response(res, 500, error.message);
-    }
-}
-
-const deleteRegisteredSubject = async(req, res) => {
-    try {
-        const resultDeleting = await studentsService.deleteRegisteredSubject(req.body, req.user);
-
-        if(resultDeleting.success) {
-            return modelsResponse.response(res, 200, resultDeleting.message);
-        }
-        else {
-            return modelsResponse.response(res, resultDeleting.errorStatus, resultDeleting.message);
-        }
-    } catch(error) {
-        return modelsResponse.response(res, 500, error.message);
-    }
-}
 
 const getClasses = async(req, res) => {
     try {
-        const resultGetting = await studentsService.getClasses(req.body);
+        const resultGetting = await studentsService.getClasses(req.user.student_id);
         
-        if(resultGetting.success) {
-            return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
-        }
-        else {
-            return modelsResponse.response(res, resultGetting.errorStatus, resultGetting.message);
-        }
-    } catch(error) {
-        return modelsResponse.response(res, 500, error.message);
-    }
-}
-
-const getRegisteredClasses = async(req, res) => {
-    try {
-        const resultGetting = await studentsService.getRegisteredClasses(req.user);
-        
-        if(resultGetting.success) {
-            return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
-        }
-        else {
-            return modelsResponse.response(res, resultGetting.errorStatus, resultGetting.message);
-        }
-    } catch(error) {
-        return modelsResponse.response(res, 500, error.message);
-    }
-}
-
-const getScore = async(req, res) => {
-    try {
-        const resultGetting = await studentsService.getScore(req.body, req.user);
-
         if(resultGetting.success) {
             return modelsResponse.response(res, 200, resultGetting.message, resultGetting.data);
         }
@@ -248,7 +166,6 @@ const updatePassword = async(req, res) => {
         return modelsResponse.response(res, 500, error.message);
     }
 }
-
 
 const createStudentsByFile = async (req, res) => {
     try {
@@ -311,16 +228,11 @@ const createStudentsByFile = async (req, res) => {
 
 module.exports = {
     createStudent,
-    createSubject,
     getInfoStudent,
     updateInfoStudent,
     deleteStudent,
-    registerSubject,
     updatePassword,
     createStudentsByFile,
-    deleteRegisteredSubject,
     getClasses,
-    getRegisteredClasses,
     updatePassword,
-    getScore
 }
