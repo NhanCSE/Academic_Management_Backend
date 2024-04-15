@@ -29,6 +29,21 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+const allowedOrigins = ["https://mybk.hcmut.edu.vn"];
+
+// Sử dụng cors middleware với tùy chọn chỉ cho phép các trang web trong danh sách
+app.use(cors({
+	origin: function (origin, callback) {
+		if (!origin || allowedOrigins.includes(origin)) {
+			callback(null, true);
+		} else {
+			callback(new Error('Not allowed by CORS'));
+		}
+	},
+	// Thêm các tùy chọn khác nếu cần thiết
+	methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
+	credentials: true,
+}));
 
 const sessionMiddleware = session({
 	secret: process.env.SESSION_SECRET,
