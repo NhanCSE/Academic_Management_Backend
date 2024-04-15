@@ -53,10 +53,12 @@ const sessionMiddleware = session({
     database: database
   }),
 	cookie: {
-		secure: false,
-		sameSite: 'None',
-		httpOnly: false,
-		maxAge: 12 * 60 * 60 * 1000,
+		path: '/', // Set the path to '/'
+		httpOnly: true, // Set HttpOnly to true
+		secure: true, // Set Secure to true
+		sameSite: 'None', // Set SameSite to 'None'
+		maxAge: 12 * 60 * 60 * 1000, // Set the max age in milliseconds
+        domain: 'https://academic-management-backend.onrender.com' // Set the domain to your domain
 	}
 });
 app.use(sessionMiddleware);
