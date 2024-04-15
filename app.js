@@ -59,7 +59,7 @@ const sessionMiddleware = session({
 		secure: true, // Set Secure to true
 		sameSite: 'None', // Set SameSite to 'None'
 		maxAge: 12 * 60 * 60 * 1000, // Set the max age in milliseconds 
-		domain: "https://stu-admin.vercel.app/"
+		domain: "stu-admin.vercel.app"
 	}
 });
 app.use(sessionMiddleware);
