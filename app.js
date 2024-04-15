@@ -29,7 +29,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-const allowedOrigins = ["https://mybk.hcmut.edu.vn"];
+const allowedOrigins = ["https://mybk.hcmut.edu.vn", "https://wiki.hcmut.edu.vn"];
 
 // Sử dụng cors middleware với tùy chọn chỉ cho phép các trang web trong danh sách
 app.use(cors({
