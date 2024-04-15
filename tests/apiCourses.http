@@ -13,7 +13,7 @@ Content-Type: application/json
 }
 
 ###
-POST  http://localhost:5000/api/v1/courses/get
+POST  https://academic-management-backend.onrender.com/api/v1/courses/get
 Content-Type: application/json
 
 {
