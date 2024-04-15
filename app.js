@@ -53,9 +53,9 @@ const sessionMiddleware = session({
     database: database
   }),
 	cookie: {
-		// secure: false,
-		// sameSite: 'None',
-		httpOnly: false,
+		secure: true,
+		sameSite: 'None',
+		httpOnly: true,
 		maxAge: 12 * 60 * 60 * 1000,
 	}
 });
