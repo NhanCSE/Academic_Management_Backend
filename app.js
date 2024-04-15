@@ -31,6 +31,8 @@ app.set('view engine', 'jade');
 
 const allowedOrigins = ["https://mybk.hcmut.edu.vn", "https://wiki.hcmut.edu.vn", "https://app.tdlogistics.net.vn", "https://bktemple.vercel.app", "https://stu-admin.vercel.app"];
 
+app.set("trust proxy", 1);
+
 // Sử dụng cors middleware với tùy chọn chỉ cho phép các trang web trong danh sách
 app.use(cors({
 	origin: function (origin, callback) {
@@ -54,7 +56,7 @@ const sessionMiddleware = session({
   }),
 	cookie: {
 		httpOnly: true, // Set HttpOnly to true
-		secure: false, // Set Secure to true
+		//secure: false, // Set Secure to true
 		sameSite: 'None', // Set SameSite to 'None'
 		maxAge: 12 * 60 * 60 * 1000, // Set the max age in milliseconds 
 	}
