@@ -225,6 +225,26 @@ const createStudentsByFile = async (req, res) => {
     }
 }
 
+const getScore = async (req, res) => {
+    try {
+        const { error } = validation.validateStudentID({ student_id : req.user.student_id });
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
+
+        const resultGettingScore = await studentsService.getScore(req.user.student_id);
+
+        if(resultGettingScore.success) {
+            return modelsResponse.response(res, 200, resultGettingScore.message, resultGettingScore.data);
+        }
+        else {
+            return modelsResponse.response(res, resultGettingScore.errorStatus, resultGettingScore.message);
+        }
+    } catch(error) {
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
 module.exports = {
     createStudent,
     getInfoStudent,
@@ -234,4 +254,5 @@ module.exports = {
     createStudentsByFile,
     getClasses,
     updatePassword,
+    getScore
 }

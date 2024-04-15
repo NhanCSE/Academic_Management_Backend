@@ -191,6 +191,7 @@ const updateScore = async (info, class_id, teacher_id) => {
     if(!course.data) {
         return modelsError.error(404, "Không tìm thấy môn học!")
     }
+    const courseName = course.data.course_name;
     const GPA = info.midterm * 0.2 + info.final * 0.5 + info.lab * 0.2 + info.exercise * 0.1;
     
     let Subject = student.data.subject;
@@ -199,13 +200,17 @@ const updateScore = async (info, class_id, teacher_id) => {
     // else push the new one or return not to change anything
     let updatedFlag = false;
     for (let courseObj of Subject) {
-        if(!courseObj[courseID]) continue;
+        if(!courseObj[courseName]) continue;
         else {
-            if(courseObj[courseID].GPA < GPA) {
-                if(courseObj[courseID].GPA < 4 && GPA >= 4) {
-                    student.data.credits += courseObj[courseID].credits;
+            if(courseObj[courseName].GPA < GPA) {
+                if(courseObj[courseName].GPA < 4 && GPA >= 4) {
+                    student.data.credits += courseObj[courseName].credits;
                 }
-                courseObj[courseID].GPA = GPA;
+                courseObj[courseName].GPA = GPA;
+                courseObj[courseName].midterm = info.midterm;
+                courseObj[courseName].final = info.final;
+                courseObj[courseName].lab = info.lab;
+                courseObj[courseName].exercise = info.exercise;
                 updatedFlag = true;
                 
             } else return {
@@ -217,15 +222,23 @@ const updateScore = async (info, class_id, teacher_id) => {
     if(!updatedFlag) {
         if(Subject.length === 0) {
             Subject = [{
-                [courseID]: {
+                [courseName]: {
                     GPA: GPA,
+                    midterm: info.midterm,
+                    final: info.final,
+                    lab: info.lab,
+                    exercise: info.exercise,
                     credits: course.data.credits
                 }
             }];
         } else {
             Subject.push({
-                [courseID]: {
+                [courseName]: {
                     GPA: GPA,
+                    midterm: info.midterm,
+                    final: info.final,
+                    lab: info.lab,
+                    exercise: info.exercise,
                     credits: course.data.credits
                 }
             });
@@ -236,8 +249,8 @@ const updateScore = async (info, class_id, teacher_id) => {
     let sumGPA = 0;
     let countCredits = 0; 
     for (let courseObj of Subject) {
-        for (let courseId in courseObj) {
-            let course = courseObj[courseId];
+        for (let courseName in courseObj) {
+            let course = courseObj[courseName];
             sumGPA += (course.GPA * course.credits);
             countCredits += course.credits;
         }

@@ -92,3 +92,11 @@ Content-Type: application/json
 }
 
 ###
+###
+
+GET http://localhost:5000/api/v1/students/get_score
+Content-Type: application/json
+
+{
+    
+}

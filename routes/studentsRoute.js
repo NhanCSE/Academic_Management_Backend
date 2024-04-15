@@ -104,6 +104,7 @@ router.post("/get",auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Qu�
 router.put("/update", auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.updateInfoStudent);
 router.delete("/delete", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), auth.isActive(), studentsController.deleteStudent);
 router.get("/get_classes",  auth.isAuthenticated(), auth.isAuthorized(["Sinh viên"]), auth.isActive(), studentsController.getClasses),
+router.get("/get_score",  auth.isAuthenticated(), auth.isAuthorized(["Sinh viên"]), auth.isActive(), studentsController.getScore),
 router.put("/update_password", studentsController.updatePassword);
 
 router.post(

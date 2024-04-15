@@ -39,7 +39,7 @@ Content-Type: application/json
     "student_id": "24270958",
     "midterm": 10,
     "final": 10,
-    "lab": 4.5,
+    "lab": 5.5,
     "exercise": 4
 }
 

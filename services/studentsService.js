@@ -346,20 +346,17 @@ const updatePassword = async(info) => {
 
 
 
-const getScore = async(info, user) => {
-    const checkScore = await Students.getScore(info, user);
-
-    if(!checkScore.success) {
-        return modelsError.error(404, checkScore.error);
+const getScore = async(student_id) => {
+    const student = await Students.getOneStudent({ student_id });
+    const reutrnObj = {
+        GPA: student.data.GPA,
+        credits: student.data.credits,
+        subject: student.data.subject
     }
-    if(checkScore.success && !checkScore.existed) {
-        return modelsError.error(404, "Không tìm thấy điểm cho học kỳ này!");
-    }
-
     return {
         success: true,
-        message: 'Truy vấn thông tin điểm học kỳ ' + info.semester + ' thành công!',
-        data: checkScore.data
+        message: `Truy vấn thông tin điểm cho sinh viên ${student_id} thành công!`,
+        data: reutrnObj
     };
 }
 
