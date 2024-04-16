@@ -47,24 +47,24 @@ app.use(cors({
 	credentials: true,
 }));
 
-// const sessionMiddleware = session({
-// 	secret: process.env.SESSION_SECRET,
-// 	resave: false,
-// 	saveUninitialized: true,
-// 	store: new FirestoreStore({
-//     database: database
-//   }),
-// 	cookie: {
-// 		httpOnly: true, // Set HttpOnly to true
-// 		secure: true, // Set Secure to true
-// 		sameSite: 'None', // Set SameSite to 'None'
-// 		maxAge: 12 * 60 * 60 * 1000, // Set the max age in milliseconds 
-// 		// domain: "stu-admin.vercel.app"
-// 	}
-// });
-//app.use(sessionMiddleware);
+const sessionMiddleware = session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: true,
+	store: new FirestoreStore({
+    database: database
+  }),
+	cookie: {
+		httpOnly: true, // Set HttpOnly to true
+		// secure: true, // Set Secure to true
+		// sameSite: 'None', // Set SameSite to 'None'
+		maxAge: 12 * 60 * 60 * 1000, // Set the max age in milliseconds 
+		// domain: "stu-admin.vercel.app"
+	}
+});
+app.use(sessionMiddleware);
 app.use(passport.initialize());
-//app.use(passport.session());
+// app.use(passport.session());
 
 
 app.use(logger('dev'));

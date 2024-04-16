@@ -24,27 +24,25 @@ const jwtOpts = {
 const jwtStrategy = new JwtStrategy(jwtOpts, async (jwtPayload, done) => {
     try {
         // Find user based on the payload data (e.g., user ID)
-        const Student = await Students.getOneStudent(jwtPayload.student_id);
-        if (!Student.success || !Student.data) {
-            return done(null, false);
-        }
+        console.log("Hlloe", jwtPayload);
         // Include additional information in the user object
         const user = {
             student_id: jwtPayload.student_id,
-            role: studentInfo.role,
-            active: studentInfo.active,
+            role: jwtPayload.role,
+            active: jwtPayload.active,
             // Include any other relevant information
         };
-        req.user = user;
+ 
         console.log(user);
         return done(null, user);
     } catch (error) {
+        console.log(error.message);
         return done(error, false);
     }
 });
 
 
-passport.use('studentLogin', jwtStrategy);
+passport.use("studentLogin", jwtStrategy);
 
 router.post('/login', async (req, res, next) => {
     try {
@@ -53,13 +51,13 @@ router.post('/login', async (req, res, next) => {
         // Find user based on the username
         const Student = await Students.getOneStudent({ username: username });
         if (!Student.success || !Student.data) { 
-            done(null, false);
+            return res.status(401).json({ error: 'Unauthorized: Invalid username or password' });
         }
         const passwordFromDatabase = Student.data.password;
         const match = bcrypt.compareSync(password, passwordFromDatabase);
 
         if (!match) {
-            return done(null, false);
+            return res.status(401).json({ error: 'Unauthorized: Invalid username or password' });
         }
 
         // Generate JWT token
@@ -68,16 +66,43 @@ router.post('/login', async (req, res, next) => {
             role: Student.data.role,
             active: Student.data.active,
         }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+        
+        // Return success response with token
         return res.status(200).json({ error: false, valid: true, message: 'Xác thực thành công.', token });
     } catch (error) {
+        // Forward error to error handling middleware
         next(error);
     }
 });
 
+
+// Middleware to authenticate requests
+const authenticate = (req, res, next) => {
+    const token = req.headers.authorization;
+    console.log(token);
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized: No token provided' });
+    }
+  
+    // Verify token
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+      }
+      req.user = decoded; // Attach decoded user information to request object
+      next(); // Proceed to next middleware
+    });
+};
+  
+  // Protected route
+// router.get('/protected-route', authenticate, (req, res) => {
+// // If the request reaches here, it means the user has been authenticated successfully
+// res.send('You have accessed the protected route!');
+// });
+
 router.get('/protected-route', passport.authenticate('studentLogin', { session: false }), (req, res) => {
     // If the request reaches here, it means the user has been authenticated successfully
-    console.log(req.user);
+    console.log("Hello World", req.user);
     res.send('You have accessed the protected route!');
 });
 
@@ -175,7 +200,7 @@ router.post("/create", auth.isAuthenticated(), auth.isAuthorized(["Quản trị 
 router.post("/get",auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.getInfoStudent);
 router.put("/update", auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.updateInfoStudent);
 router.delete("/delete", auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), auth.isActive(), studentsController.deleteStudent);
-router.get("/get_classes",  auth.isAuthenticated(), auth.isAuthorized(["Sinh viên"]), auth.isActive(), studentsController.getClasses),
+router.get("/get_classes", passport.authenticate('studentLogin', { session: false }), auth.isAuthenticated(), auth.isAuthorized(["Sinh viên"]), auth.isActive(), studentsController.getClasses),
 router.get("/get_score",  auth.isAuthenticated(), auth.isAuthorized(["Sinh viên"]), auth.isActive(), studentsController.getScore),
 router.put("/update_password", studentsController.updatePassword);
 
