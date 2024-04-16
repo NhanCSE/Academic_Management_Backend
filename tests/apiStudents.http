@@ -84,7 +84,7 @@ Content-Type: application/json
 
 ###
 
-GET https://academic-management-backend.onrender.com/api/v1/students/get_classes
+GET http://localhost:5000/api/v1/students/get_classes
 Content-Type: application/json
 
 {
@@ -92,6 +92,13 @@ Content-Type: application/json
 }
 
 ###
+
+GET http://localhost:5000/api/v1/students/protected-route
+Content-Type: application/json
+
+{
+    
+}
 ###
 
 GET http://localhost:5000/api/v1/students/get_score
