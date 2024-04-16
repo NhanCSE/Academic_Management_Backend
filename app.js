@@ -29,23 +29,29 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-const allowedOrigins = ["https://mybk.hcmut.edu.vn", "https://wiki.hcmut.edu.vn", "https://app.tdlogistics.net.vn", "https://bktemple.vercel.app", "https://stu-admin.vercel.app"];
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+});
 
-app.set("trust proxy", 1);
+// const allowedOrigins = ["https://mybk.hcmut.edu.vn", "https://wiki.hcmut.edu.vn", "https://app.tdlogistics.net.vn", "https://bktemple.vercel.app", "https://stu-admin.vercel.app"];
 
-// Sử dụng cors middleware với tùy chọn chỉ cho phép các trang web trong danh sách
-app.use(cors({
-	origin: function (origin, callback) {
-		if (!origin || allowedOrigins.includes(origin)) {
-			callback(null, true);
-		} else {
-			callback(new Error('Not allowed by CORS'));
-		}
-	},
-	// Thêm các tùy chọn khác nếu cần thiết
-	methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
-	credentials: true,
-}));
+// app.set("trust proxy", 1);
+
+// // Sử dụng cors middleware với tùy chọn chỉ cho phép các trang web trong danh sách
+// app.use(cors({
+// 	origin: function (origin, callback) {
+// 		if (!origin || allowedOrigins.includes(origin)) {
+// 			callback(null, true);
+// 		} else {
+// 			callback(new Error('Not allowed by CORS'));
+// 		}
+// 	},
+// 	// Thêm các tùy chọn khác nếu cần thiết
+// 	methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
+// 	credentials: true,
+// }));
 
 const sessionMiddleware = session({
 	secret: process.env.SESSION_SECRET,
