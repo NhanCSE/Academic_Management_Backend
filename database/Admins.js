@@ -46,9 +46,20 @@ const createNewAdmin = async (info) => {
 }
 
 const getOneAdmin = async (info) => {
-    const conditionFields = Object.keys(info);
-    const conditionValues = Object.values(info);
-    return await dbUtils.findIntersect("admins", conditionFields, conditionValues);
+    try {
+        const conditionFields = Object.keys(info);
+        const conditionValues = Object.values(info);
+        const result = await dbUtils.findIntersect("admins", conditionFields, conditionValues);
+        return {
+            success: true,
+            data: result
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false
+        }
+    } 
 }
 
 module.exports = {
