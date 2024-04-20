@@ -62,15 +62,15 @@ const sessionMiddleware = session({
   }),
 	cookie: {
 		httpOnly: true, // Set HttpOnly to true
-		secure: true, // Set Secure to true
-		sameSite: 'None', // Set SameSite to 'None'
+		// secure: true, // Set Secure to true
+		// sameSite: 'None', // Set SameSite to 'None'
 		maxAge: 12 * 60 * 60 * 1000, // Set the max age in milliseconds 
-		domain: "stu-admin.vercel.app"
+		// domain: "stu-admin.vercel.app"
 	}
 });
 app.use(sessionMiddleware);
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 
 app.use(logger('dev'));
