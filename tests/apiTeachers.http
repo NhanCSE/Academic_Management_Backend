@@ -31,14 +31,16 @@ Content-Type: application/json
 
 GET http://localhost:5000/api/v1/teachers/get
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiaWF0IjoxNzEzNjAxNjU2LCJleHAiOjE3MTM2MDUyNTZ9.7j40_Me9UaEpKS0oyOpBD96Rk_2mppl_-z3-ZaXuGYc
 
 {
     
 }
 
 ### 
-PUT http://localhost:5000/api/v1/teachers/update?teacher_id=GV59555
+PUT http://localhost:5000/api/v1/teachers/update?teacher_id=GV53587
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTM2MDM1MjEsImV4cCI6MTcxMzYwNzEyMX0.lqi7UDxRf1JMLn9eo6iCOdxSeOm1xI2ZPB8BBn08IFw
 
 {
     "contact_email": "huy.bui52207@gmail.com",
@@ -67,6 +69,7 @@ Content-Type: application/json
 ###
 GET http://localhost:5000/api/v1/teachers/get_classes
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWFjaGVyX2lkIjoiR1Y1MzU4NyIsInJvbGUiOiJHaeG6o25nIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTM2MDM0MDgsImV4cCI6MTcxMzYwNzAwOH0.XdxRw9hJobg_Pz1VBfDtW75VPrKzV5nh7znFTba6YN8
 
 {
     
