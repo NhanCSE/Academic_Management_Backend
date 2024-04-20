@@ -9,8 +9,26 @@ const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
 
-router.post("/create",  auth.isAuthenticated(), auth.isAuthorized(["Quản trị viên"]), auth.isActive(), classesController.createClass);
-router.post("/register", auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.registerClass);
-router.post("/update_score", auth.isAuthenticated(), auth.isAuthorized(["Giảng viên"]), auth.isActive(), classesController.updateScore);
-router.put("/cancel_register", auth.isAuthenticated(), auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.cancelRegisterClass);
+const jwt = require('jsonwebtoken');
+// Middleware to authenticate requests
+const authenticate = (req, res, next) => {
+    const token = req.headers.authorization;
+    console.log(token);
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized: No token provided' });
+    }
+  
+    // Verify token
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+      }
+      req.user = decoded; // Attach decoded user information to request object
+      next(); // Proceed to next middleware
+    });
+};
+router.post("/create", authenticate, auth.isAuthorized(["Quản trị viên"]), auth.isActive(), classesController.createClass);
+router.post("/register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.registerClass);
+router.post("/update_score", authenticate, auth.isAuthorized(["Giảng viên"]), auth.isActive(), classesController.updateScore);
+router.put("/cancel_register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.cancelRegisterClass);
 module.exports = router;
