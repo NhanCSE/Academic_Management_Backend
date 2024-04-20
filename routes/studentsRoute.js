@@ -105,7 +105,7 @@ const upload = multer({
 });
 
 router.post("/create", authenticate, auth.isAuthorized(["Quản trị viên"]), auth.isActive(), studentsController.createStudent);
-router.post("/get", authenticate, auth.isActive(), studentsController.getInfoStudent);
+router.post("/get", authenticate, auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.getInfoStudent);
 router.put("/update", authenticate, auth.isAuthorized(["Sinh viên", "Quản trị viên"]), auth.isActive(), studentsController.updateInfoStudent);
 router.delete("/delete", authenticate, auth.isAuthorized(["Quản trị viên"]), auth.isActive(), studentsController.deleteStudent);
 router.get("/get_classes", authenticate, auth.isAuthorized(["Sinh viên"]), auth.isActive(), studentsController.getClasses),

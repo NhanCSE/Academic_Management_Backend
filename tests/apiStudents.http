@@ -18,9 +18,9 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:5000/api/v1/students/get
+POST http://localhost:5000/api/v1/students/get
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiaWF0IjoxNzEzNjAxNDMxLCJleHAiOjE3MTM2MDUwMzF9.z1u3wujlCOOPQ73t6bxXOkP8qd_sMiTDiFN0eGulTRI
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTM2MDM4MTcsImV4cCI6MTcxMzYwNzQxN30.CAKGD633K_gP6ec-GWucvucSwhD5cNeuVE_tS_jpL2w
 
 {
                                                                            
