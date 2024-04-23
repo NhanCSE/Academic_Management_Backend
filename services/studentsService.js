@@ -1,5 +1,6 @@
 const Students = require("../database/Students");
 const Classes = require("../database/Classes");
+const Scores = require("../database/Scores");
 const modelsError = require("../models/error");
 const bcrypt = require("bcrypt");
 const utils = require("../lib/utils");
@@ -110,7 +111,7 @@ const createStudent = async (info) => {
     info.role = "Sinh viên";
     info.GPA = 0.0;
     info.credits = 0;
-    info.subject = new Array();
+    //info.subject = new Array();
 
 
     const creatingResult = await Students.createNewStudent(info);
@@ -124,7 +125,7 @@ const createStudent = async (info) => {
                 // pass: 'dtzd zgdx lcrr ieej'
             }
           });
-          const link = "http://localhost:5000/api/v1/students/reser_password/........"
+          //const link = "http://localhost:5000/api/v1/students/reser_password/........"
           var mailOptions = {
             from: 'youremail@gmail.com',
             to: info.contact_email,
@@ -132,7 +133,7 @@ const createStudent = async (info) => {
             text: 'Tài khoản của bạn được tạo thành công với thông tin người dùng được cung cấp bên dưới'
             + '\nUsername: ' + info.username 
             + '\nPassword: ' + info.credential_id 
-            + '\nĐể đổi mật khẩu vui lòng truy cập đường link sau: ' + link,
+            + '\nVui lòng đổi mật khẩu lần đầu!',
           };
           
           transporter.sendMail(mailOptions, function(error, info){
@@ -313,7 +314,6 @@ const getClasses = async(student_id) => {
 }
 
 
-
 const updatePassword = async(info) => {
 
     const Student = await Students.getOneStudent({ username: info.username });
@@ -345,13 +345,13 @@ const updatePassword = async(info) => {
 }
 
 
-
 const getScore = async(student_id) => {
     const student = await Students.getOneStudent({ student_id });
+    const allScores = await Scores.getAllScores(`students/${student.data.id}/scores`);
     const reutrnObj = {
         GPA: student.data.GPA,
         credits: student.data.credits,
-        subject: student.data.subject
+        allScores: allScores
     }
     return {
         success: true,

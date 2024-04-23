@@ -70,7 +70,8 @@ const createTeacher = async (info) => {
     info.teacher_id = resultGeneratingID.teacher_id;
     info.username = generateUsername(info.fullname, info.teacher_id);
     info.password = utils.hash(info.username);
-
+    info.role = "Giảng viên";
+    
     const creatingResult = await Teachers.createNewTeacher(info);
     if(creatingResult.success) {
         var transporter = nodemailer.createTransport({

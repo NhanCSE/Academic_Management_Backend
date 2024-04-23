@@ -15,7 +15,7 @@ class Validation {
             address: Joi.string().required(),
             home_class: Joi.string().regex(new RegExp(process.env.REGEX_CLASSROOM)).required(),
             degree: Joi.string().valid("Cử nhân", "Thạc sĩ", "Tiến sĩ").required(),
-            falculty: Joi.string().required(),            
+            faculty: Joi.string().required(),            
             major: Joi.string().required(),
             subject: Joi.array().items(Joi.string()).required()
         }).strict()

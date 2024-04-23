@@ -102,5 +102,5 @@ module.exports = {
     getOneStudent,
     getManyStudents,
     getAllStudents,
-
+    
 }

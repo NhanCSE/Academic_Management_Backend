@@ -2,6 +2,7 @@ const Classes = require("../database/Classes");
 const Courses = require("../database/Courses");
 const Students = require("../database/Students");
 const Teachers = require("../database/Teachers");
+const Scores = require("../database/Scores");
 const modelsError = require("../models/error");
 
 //Kiểm tra trùng giờ học
@@ -172,11 +173,18 @@ const registerClassForTeacher = async (info, teacher_id) => {
     }
 }
 
+const getAllScores = async(student_id) => {
+    const student = await Students.getOneStudent({ student_id: student_id });
+    const dbCollection = `students/${student.data.id}/scores`;
+    return await Scores.getAllScores(dbCollection);
+}
+
 const updateScore = async (info, class_id, teacher_id) => {
     const student = await Students.getOneStudent({ student_id: info.student_id });
     const teacher = await Teachers.getOneTeacher({ teacher_id });
     const teacherClass = await Classes.getAllClasses(`teachers/${teacher.data.id}/classes`);
-    
+    const studentClass = await Classes.getOneClass(`students/${student.data.id}/classes`, { class_id: class_id });
+
     const teacherClassID = teacherClass.map(ele => ele.class_id);
     if(!teacherClassID.includes(class_id)) {
         return modelsError.error(409, "Giảng viên không được cập nhật điểm cho lớp khác");
@@ -193,72 +201,51 @@ const updateScore = async (info, class_id, teacher_id) => {
     }
     const courseName = course.data.course_name;
     const GPA = info.midterm * 0.2 + info.final * 0.5 + info.lab * 0.2 + info.exercise * 0.1;
-    
-    let Subject = student.data.subject;
+    const semester = studentClass.data.semester;
 
-    // If studied subject before => check if now get higher point to update
-    // else push the new one or return not to change anything
-    let updatedFlag = false;
-    for (let courseObj of Subject) {
-        if(!courseObj[courseName]) continue;
+    const updateInfo = {
+        course_id: courseID,
+        course_name: courseName,
+        semester: semester,
+        midterm: info.midterm,
+        final: info.final,
+        lab: info.lab,
+        exercise: info.exercise,
+        credits: course.data.credits,
+        GPA: GPA
+    }
+
+    let allScores = await getAllScores(info.student_id);
+    const allCourseID = allScores.map(ele => ele.course_id);
+    if(!allCourseID.includes(courseID)) {
+        await Scores.createScore(updateInfo, `students/${student.data.id}/scores`);
+        if(updateInfo.GPA >= 4) student.data.credits += updateInfo.credits;
+    } else {
+        subjectScore = await Scores.getOneScore(`students/${student.data.id}/scores`, { course_id: courseID });
+        if(subjectScore.data.GPA < updateInfo.GPA) {
+            await Scores.updateOneScore(`students/${student.data.id}/scores`, courseID, updateInfo);
+            if(subjectScore.GPA < 4 && updateInfo.GPA > 4){
+                student.data.credits += updateInfo.credits;
+            }
+        }
         else {
-            if(courseObj[courseName].GPA < GPA) {
-                if(courseObj[courseName].GPA < 4 && GPA >= 4) {
-                    student.data.credits += courseObj[courseName].credits;
-                }
-                courseObj[courseName].GPA = GPA;
-                courseObj[courseName].midterm = info.midterm;
-                courseObj[courseName].final = info.final;
-                courseObj[courseName].lab = info.lab;
-                courseObj[courseName].exercise = info.exercise;
-                updatedFlag = true;
-                
-            } else return {
+            return {
                 success: true,
                 message: `Điểm số hiện tại thấp hơn điểm số trước đây. Không thực hiện cập nhật!`
             }
         }
     }
-    if(!updatedFlag) {
-        if(Subject.length === 0) {
-            Subject = [{
-                [courseName]: {
-                    GPA: GPA,
-                    midterm: info.midterm,
-                    final: info.final,
-                    lab: info.lab,
-                    exercise: info.exercise,
-                    credits: course.data.credits
-                }
-            }];
-        } else {
-            Subject.push({
-                [courseName]: {
-                    GPA: GPA,
-                    midterm: info.midterm,
-                    final: info.final,
-                    lab: info.lab,
-                    exercise: info.exercise,
-                    credits: course.data.credits
-                }
-            });
-        }
-        if(GPA >= 4) student.data.credits += course.data.credits;
-    }
     // calculated GPA overall
+    allScores = await getAllScores(info.student_id);
     let sumGPA = 0;
     let countCredits = 0; 
-    for (let courseObj of Subject) {
-        for (let courseName in courseObj) {
-            let course = courseObj[courseName];
-            sumGPA += (course.GPA * course.credits);
-            countCredits += course.credits;
-        }
+    for (let score of allScores) {
+        sumGPA += (score.GPA * score.credits);
+        countCredits += score.credits;
     }
     console.log(sumGPA, countCredits);
     const overallGPA = sumGPA / countCredits; 
     const updatedInfo = {
-        subject: Subject,
         GPA: overallGPA,
         credits: student.data.credits
     };
