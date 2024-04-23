@@ -1,7 +1,12 @@
+const { messaging } = require("firebase-admin");
 const Classes = require("../database/Classes");
 const Courses = require("../database/Courses");
 const Students = require("../database/Students");
 const Teachers = require("../database/Teachers");
+const { storage } = require("../firebase/firebaseConnection");
+const fs = require('fs');
+const archiver = require('archiver');
+const { PassThrough } = require('stream');
 const modelsError = require("../models/error");
 
 //Kiểm tra trùng giờ học
@@ -324,11 +329,140 @@ const cancelRegisterForTeacher = async (info, teacher_id) => {
     }
 }
 
+const submitFile = async (file, class_id, student_id) => {
+    const bucket = storage.bucket();
+
+    // Create a unique filename
+    const filename = `${class_id}_${student_id}_${file.originalname}`;
+
+    // Upload file to Firebase Storage
+    const fileUpload = bucket.file(filename);
+
+    const blobStream = fileUpload.createWriteStream({
+        metadata: {
+            contentType: 'application/pdf'
+        }
+    });
+
+    blobStream.on('error', (error) => {
+        console.error(error);
+        return modelsError.error(500, "Lỗi luồng ghi file");
+    });
+
+    blobStream.on('finish', () => {
+        // The public URL can be used to access the file via HTTP
+        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`;
+        return {
+            success: true,
+            publicUrl: publicUrl
+        }
+    });
+
+    blobStream.end(file.buffer);
+    return {
+        success: true
+    }
+}
+
+const showSubmitFileForStudent = async (class_id, student_id) => {
+    const prefix = class_id + "_" + student_id; 
+            
+    // List files in the specified folder in Firebase Storage
+    const [files] = await storage.bucket().getFiles({
+        prefix: `${prefix}`
+    });
+    if(files.length === 0 ) {
+        return modelsResponse.response(res, 404, "Chưa có file nộp nào");
+    }
+    const filteredFiles = files
+    .filter(file => file.name.startsWith(`${prefix}`))
+    .map(file => {
+        const parts = file.name.split('_');
+        return parts.slice(3).join('_'); // Concatenate parts from the third underscore to the last part
+    });
+    return {
+        success: true,
+        data: filteredFiles
+    }
+}
+
+const showSubmitFileForTeacher = async (class_id) => {
+    const prefix = class_id; 
+            
+    // List files in the specified folder in Firebase Storage
+    const [files] = await storage.bucket().getFiles({
+        prefix: `${prefix}`
+    });
+    if(files.length === 0 ) {
+        return modelsError.error(404, "Chưa có file nào được nộp");
+    }
+    const filteredFiles = files
+    .filter(file => file.name.startsWith(`${prefix}`))
+    .map(file => {
+        const parts = file.name.split('_');
+        return parts.slice(2).join('_'); // Concatenate parts from the third underscore to the last part
+    });
+    return {
+        success: true,
+        data: filteredFiles
+    }
+}
+
+const getSubmitFiles = async (prefix) => {
+
+    // Create a pass-through stream for piping the zip file
+    const passThroughStream = new PassThrough();
+        
+    // Create a new zip archive
+    const archive = archiver('zip', {
+        zlib: { level: 9 } // Compression level (0 to 9)
+    });
+
+    // Pipe the archive to the pass-through stream
+    archive.pipe(passThroughStream);
+
+    // List files in the specified folder in Firebase Storage
+    const [files] = await storage.bucket().getFiles({
+        prefix: prefix
+    });
+
+    // Filter files that match the criteria (start with "classId_abc")
+    const filteredFiles = files.filter(file => file.name.startsWith(prefix));
+
+    // Download each matching file and add it to the zip archive
+    for (const file of filteredFiles) {
+        const fileName = file.name;
+        const fileRef = storage.bucket().file(fileName);
+    
+        // Create a readable stream from the file
+        const fileReadStream = fileRef.createReadStream();
+    
+        // Add the file to the zip archive with the same name
+        archive.append(fileReadStream, { name: fileName });
+    }
+
+    // Finalize the zip archive
+    archive.finalize();
+    return { passThroughStream };
+
+}
+
+const deleteSubmitFile = async (filename) => {
+    // Get a reference to the file
+    const fileRef = storage.bucket().file(filename);
+    await fileRef.delete();
+}
+
 module.exports = {
     createClass,
     registerClassForStudent,
     registerClassForTeacher,
     updateScore,
     cancelRegisterForStudent,
-    cancelRegisterForTeacher
+    cancelRegisterForTeacher,
+    submitFile,
+    showSubmitFileForStudent,
+    showSubmitFileForTeacher,
+    getSubmitFiles,
+    deleteSubmitFile
 }

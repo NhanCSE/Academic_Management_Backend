@@ -1,4 +1,4 @@
-const db = require("../firebase/firebaseConnection");
+const { database: db } = require("../firebase/firebaseConnection");
 const dbUtils = require("../lib/dbUtils");
 const AdminsRef = db.collection("admins");
 

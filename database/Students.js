@@ -1,4 +1,4 @@
-const db = require("../firebase/firebaseConnection");
+const { database: db } = require("../firebase/firebaseConnection");
 const dbUtils = require("../lib/dbUtils");
 const studentsRef = db.collection("students");
 //const Subject = db.collection("subjects");
