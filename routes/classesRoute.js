@@ -1,13 +1,8 @@
 const express = require("express");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
 const auth = require("../lib/auth");
 const classesController = require("../controllers/classesController");
 const router = express.Router();
-const fs = require("fs");
 const multer = require("multer");
-const path = require("path");
 
 const jwt = require('jsonwebtoken');
 // Middleware to authenticate requests
