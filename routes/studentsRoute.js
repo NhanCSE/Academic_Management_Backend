@@ -83,8 +83,8 @@ const fileFilter = (req, file, done) => {
         return done(new Error("File không tồn tại."));
     }
 
-    if (file.mimetype === "application/vnd.ms-excel") { 
-       return done(new Error("File không hợp lệ. Chỉ cho phép file .xlsx"));
+    if (file.mimetype !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") { 
+        return done(new Error("File không hợp lệ. Chỉ cho phép file .xlsx"));
     }
 
     const maxFileSize = 5 * 1024 * 1024;

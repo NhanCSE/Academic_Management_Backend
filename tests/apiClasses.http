@@ -52,3 +52,30 @@ Content-Type: application/json
     "course_id": "CS1716",
     "class_id": "CS1716_CQ01"
 }
+
+###
+DELETE  http://localhost:5000/api/v1/classes/delete_file?filename=CS1716_CQ01_24270958_Bảng 2.pdf
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNzA5NTgiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzEzODc3NTE0LCJleHAiOjE3MTM4ODExMTR9.NyFnsBr_zdEU-cwUN6ip180QsNyjvjBpMOYN2LQseM0
+
+{
+    
+}
+
+###
+GET http://localhost:5000/api/v1/classes/show_files?class_id=CS1716_CQ01
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNzA5NTgiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzEzOTQwNDU0LCJleHAiOjE3MTM5NDQwNTR9.uDU3hMyssQyMcwKe29d48b1wK3UoP0BW9xGiGPuW5ac
+
+{
+    
+}
+
+###
+GET http://localhost:5000/api/v1/classes/get_files?class_id=CS1716_CQ01
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNzA5NTgiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzEzODc3NTE0LCJleHAiOjE3MTM4ODExMTR9.NyFnsBr_zdEU-cwUN6ip180QsNyjvjBpMOYN2LQseM0
+
+{
+    
+}
