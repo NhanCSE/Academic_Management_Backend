@@ -32,14 +32,15 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/api/v1/classes/update_score?class_id=CS1716_CC02
+POST http://localhost:5000/api/v1/classes/update_score?class_id=CS1716_CQ01
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWFjaGVyX2lkIjoiR1Y1MzU4NyIsInJvbGUiOiJHaeG6o25nIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTM5MzkzMTgsImV4cCI6MTcxMzk0MjkxOH0.dP1MgwYUbujaJCURX1Hjqk8-su_0QeGzfm_Q8kwoDz8
 
 {
-    "student_id": "24270958",
+    "student_id": "24110830",
     "midterm": 10,
     "final": 10,
-    "lab": 5.5,
+    "lab": 10,
     "exercise": 4
 }
 

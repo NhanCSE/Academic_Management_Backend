@@ -111,7 +111,7 @@ const createStudent = async (info) => {
     info.role = "Sinh viên";
     info.GPA = 0.0;
     info.credits = 0;
-    //info.subject = new Array();
+    info.passed_course = new Array();
 
 
     const creatingResult = await Students.createNewStudent(info);

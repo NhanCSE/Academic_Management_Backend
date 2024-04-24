@@ -1,7 +1,6 @@
 const db = require("../firebase/firebaseConnection");
 const dbUtils = require("../lib/dbUtils");
 const studentsRef = db.collection("students");
-//const Subject = db.collection("subjects");
 const coursesRef = db.collection("courses")
 const modelsError = require("../models/error");
 

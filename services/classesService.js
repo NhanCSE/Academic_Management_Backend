@@ -181,18 +181,28 @@ const getAllScores = async(student_id) => {
 
 const updateScore = async (info, class_id, teacher_id) => {
     const student = await Students.getOneStudent({ student_id: info.student_id });
-    const teacher = await Teachers.getOneTeacher({ teacher_id });
-    const teacherClass = await Classes.getAllClasses(`teachers/${teacher.data.id}/classes`);
-    const studentClass = await Classes.getOneClass(`students/${student.data.id}/classes`, { class_id: class_id });
+    if(!student.data) {
+        return modelsError.error(404, "Không tìm thấy sinh viên!");
+    }
 
+    const teacher = await Teachers.getOneTeacher({ teacher_id });
+    if(!teacher.data) {
+        return modelsError.error(404, "Không tìm thấy giảng viên!");
+    }
+
+    const teacherClass = await Classes.getAllClasses(`teachers/${teacher.data.id}/classes`);
     const teacherClassID = teacherClass.map(ele => ele.class_id);
     if(!teacherClassID.includes(class_id)) {
         return modelsError.error(409, "Giảng viên không được cập nhật điểm cho lớp khác");
     }
 
-    if(!student.data) {
-        return modelsError.error(404, "Không tìm thấy sinh viên!");
+
+    const studentClass = await Classes.getOneClass(`students/${student.data.id}/classes`, { class_id: class_id });
+    if(!studentClass.data) {
+        return modelsError.error(409, "Sinh viên không học lớp này");
     }
+
+    
     const courseID = class_id.split("_")[0];
 
     const course = await Courses.getOneCourse({ course_id: courseID });
@@ -201,8 +211,9 @@ const updateScore = async (info, class_id, teacher_id) => {
     }
     const courseName = course.data.course_name;
     const GPA = info.midterm * 0.2 + info.final * 0.5 + info.lab * 0.2 + info.exercise * 0.1;
-    const semester = studentClass.data.semester;
 
+    const semester = studentClass.data.semester;
+    
     const updateInfo = {
         course_id: courseID,
         course_name: courseName,
@@ -217,15 +228,20 @@ const updateScore = async (info, class_id, teacher_id) => {
 
     let allScores = await getAllScores(info.student_id);
     const allCourseID = allScores.map(ele => ele.course_id);
+
     if(!allCourseID.includes(courseID)) {
         await Scores.createScore(updateInfo, `students/${student.data.id}/scores`);
-        if(updateInfo.GPA >= 4) student.data.credits += updateInfo.credits;
+        if(updateInfo.GPA >= 4) {
+            student.data.credits += updateInfo.credits;
+            student.data.passed_course.push(courseID);
+        }
     } else {
         subjectScore = await Scores.getOneScore(`students/${student.data.id}/scores`, { course_id: courseID });
         if(subjectScore.data.GPA < updateInfo.GPA) {
             await Scores.updateOneScore(`students/${student.data.id}/scores`, courseID, updateInfo);
             if(subjectScore.GPA < 4 && updateInfo.GPA > 4){
                 student.data.credits += updateInfo.credits;
+                student.data.passed_course.push(courseID);
             }
         }
         else {
@@ -245,11 +261,12 @@ const updateScore = async (info, class_id, teacher_id) => {
     }
     console.log(sumGPA, countCredits);
     const overallGPA = sumGPA / countCredits; 
-    const updatedInfo = {
+    const updatedInfoStudent = {
         GPA: overallGPA,
-        credits: student.data.credits
+        credits: student.data.credits,
+        passed_course: student.data.passed_course
     };
-    await Students.updateInfoStudent(info.student_id, updatedInfo);
+    await Students.updateInfoStudent(info.student_id, updatedInfoStudent);
     return {
         success: true,
         message: `Cập nhật điểm số cho sinh viên ${info.student_id} thành công!`
