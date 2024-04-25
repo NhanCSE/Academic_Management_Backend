@@ -3,7 +3,9 @@ const modelsResponse = require("../models/response");
 const teacherValidation = require("../validations/teachersValidation");
 const validation = new teacherValidation();
 
-
+//HÀM TẠO GIẢNG VIÊN
+//b1: Xác thực thông tin của req có hợp lệ ko
+//B2: tạo gV ở service với các trường trong req.body
 const createTeacher = async (req, res) => {
     try {
         const { error } = validation.validateCreateTeacher(req.body);
@@ -21,6 +23,10 @@ const createTeacher = async (req, res) => {
     }
 }
 
+//HÀM LẤY THÔNG TIN CỦA GIẢNG VIÊN
+//nếu user.role là Admin, nếu req.body = null => lấy all Giảng viên, ngược lại lấy số giảng viên được chỉ định bằng teacher_id
+//nếu user.role là GV, thì lấy thông tin của chính GV đó.
+//Lưu ý khi lấy thông tin thì KHÔNG lấy trường password
 const getInfoTeacher = async(req, res)=>{
     try {
         let resultGetting;
@@ -55,7 +61,12 @@ const getInfoTeacher = async(req, res)=>{
     }
 }
 
-
+//HÀM CẬP NHẬT THÔNG TIN GIẢNG VIÊN
+//B1: xác thực teacher_id
+//B2: Nếu user là Giảng viên => Chỉ được quyền thay đổi thông tin của bản thân
+// nếu user là QTV => Được thay đổi thông tin
+//Nếu thông tin cập nhật có trường password thì phải hash
+//B3: Cập nhật thông tin ở service
 const updateInfoTeacher = async(req, res) => {
     try {
         const { error: conditionError } = validation.validateTeacherID(req.query);
@@ -94,6 +105,9 @@ const updateInfoTeacher = async(req, res) => {
     }
 }
 
+//Hàm xóa
+//B1: Xác thực đầu vào
+//B2: Xóa ở service
 const deleteTeacher = async(req, res) => {
     try {
         const { error } = validation.validateTeacherID(req.query);
@@ -113,6 +127,9 @@ const deleteTeacher = async(req, res) => {
     }
 }
 
+//Hàm cập nhật mật khẩu
+//B1: Xác thực đầu vào
+//B2: Cập nhật mk ở service
 const updatePassword = async(req, res) => {
     try {
         const { error } = validation.validateUpdatePassword(req.body);
@@ -132,6 +149,7 @@ const updatePassword = async(req, res) => {
     }
 }
 
+//Hàm lấy thông tin lớp của GV
 const getClasses = async (req, res) => {
     try {
         const resultGettingClasses = await teachersService.getClasses(req.user.teacher_id);

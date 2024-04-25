@@ -5,17 +5,21 @@ const adminsValidation = require("../validations/adminsValidation");
 
 const validation = new adminsValidation;
 
+//Tạo admin
+//b1: xác thực THÔNG TIN CỦA REQ
+//b2: tạo password vào db bằng pp hash
+//b3: tạo admin dưới service
 const createAdmin = async (req, res) => {
-    //Validation and Authorization Part will sooner release
     try {
+        //b1
         const { error } = validation.validateCreateAdmin(req.body);
         if(error) {
             return modelsResponse.response(res, 400, error.message);
         }
-
+        //b2
         req.body.password = utils.hash(req.body.password);
         const resultCreating = await adminsService.createAdmin(req.body);
-        
+        //b3
         if(resultCreating.success) {
             return modelsResponse.response(res, 200, resultCreating.message);
         } else {

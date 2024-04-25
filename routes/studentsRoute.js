@@ -1,6 +1,4 @@
 const express = require("express");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 const auth = require("../lib/auth");
 const studentsController = require("../controllers/studentsController");
@@ -9,7 +7,6 @@ const router = express.Router();
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
-
 const jwt = require('jsonwebtoken');
 
 
@@ -77,6 +74,7 @@ const storage = multer.diskStorage({
         done(null,  Date.now() + "_" + file.originalname);
     }
 });
+
 
 const fileFilter = (req, file, done) => {
     if (!file) {

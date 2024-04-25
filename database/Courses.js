@@ -16,7 +16,7 @@ const createNewCourse = async (info) => {
         };
         
     } catch (error) {
-        console.error(error.message);
+        //console.error(error.message);
         return {
             success: false,
             error: error.message
@@ -33,7 +33,7 @@ const getOneCourse = async(condition) => {
             data: result
         }
     } catch (error) {
-        console.error(error.message);
+        //console.error(error.message);
         return modelsError.error(500, error.message);
     }
 }
@@ -48,7 +48,7 @@ const getManyCourses = async(condition) => {
             data: result
         }
     } catch (error) {
-        console.error(error.message);
+        //console.error(error.message);
         return modelsError.error(500, error.message);
     }
 }
@@ -61,7 +61,7 @@ const getAllCourses = async() => {
             data: result
         }
     } catch (error) {
-        console.error(error.message);
+        //console.error(error.message);
         return modelsError.error(500, error.message);
     }
 }

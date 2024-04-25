@@ -20,7 +20,7 @@ const checkExist = async (adminID) => {
             };
         }
     } catch (error) {
-        console.error(error.message);
+        //console.error(error.message);
         return {
             success: false,
             error: error.message
@@ -31,13 +31,13 @@ const checkExist = async (adminID) => {
 
 const createNewAdmin = async (info) => {
     try {
-        console.log(info);
+        //console.log(info);
         const docRef = await AdminsRef.add(info);
         return {
             success: true,
         };
     } catch (error) {
-        console.error(error.message);
+        //console.error(error.message);
         return {
             success: false,
             error: error.message
@@ -55,7 +55,7 @@ const getOneAdmin = async (info) => {
             data: result
         }
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return {
             success: false
         }

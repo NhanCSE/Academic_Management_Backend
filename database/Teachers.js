@@ -19,7 +19,7 @@ const createNewTeacher = async (info) => {
         };
         
     } catch (error) {
-        console.error(error.message);
+        //console.error(error.message);
         return {
             success: false,
             error: error.message
@@ -38,7 +38,7 @@ const getOneTeacher = async(condition) => {
             data: result
         }
     } catch (error) {
-        console.error(error.message);
+        //console.error(error.message);
         return modelsError.error(500, error.message);
     }
 }
@@ -53,7 +53,7 @@ const getManyTeachers = async(condition) => {
             data: result
         }
     } catch (error) {
-        console.error(error.message);
+        //console.error(error.message);
         return modelsError.error(500, error.message);
     }
 }
@@ -68,7 +68,7 @@ const getAllTeachers = async() => {
         }
     }
     catch{
-        console.error(error.message);
+        //console.error(error.message);
         return {
             success: false,
             error: error.message

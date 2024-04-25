@@ -1,12 +1,12 @@
 const Teachers = require("../database/Teachers");
 const Classes = require("../database/Classes");
-//const Teachers = require("../database/Teachers");
 const modelsError = require("../models/error");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const utils = require("../lib/utils");
 const { messaging } = require("firebase-admin");
 
+//Hàm hỗ trợ tạo mã số giảng viên
 const generateTeacherId = async(suffix) => {
     let teacher_id;
     let check;
@@ -28,6 +28,7 @@ const generateTeacherId = async(suffix) => {
     }
 }
 
+//Hàm hỗ trợ tạo username cho Giảng viên
 const generateUsername = (fullname, teacher_id) => {
     // Convert Vietnamese characters to English
     const vietnameseToEnglish = {
@@ -56,11 +57,16 @@ const generateUsername = (fullname, teacher_id) => {
                      .join('.'); // Join with '.' between last name and first name
 
     // eliminate GV in teacher ID
-    console.log(teacher_id);
     teacher_id = teacher_id.substring(2);
     return username + teacher_id;
 }
 
+
+//Hàm tạo mới giảng viên
+//Bước 1 Tạo teacher_id bằng hàm hỗ trợ => nếu không thành công --> error
+//Bước 2 Tạo thông tin một số trường còn thiếu
+//Bước 3 Tạo thông tin GV ở dưới DB
+//Bước 4 Gủi mail yêu cầu đổi pass để kích hoạt active=1
 const createTeacher = async (info) => {
 
     const resultGeneratingID = await generateTeacherId("GV");
@@ -93,11 +99,11 @@ const createTeacher = async (info) => {
           };
           
           transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-              console.log(error);
-            } else {
-              console.log('Email sent: ' + info.response);
-            }
+            // if (error) {
+            //   console.log(error);
+            // } else {
+            //   console.log('Email sent: ' + info.response);
+            // }
           });
         return {
             success: true,
@@ -109,7 +115,7 @@ const createTeacher = async (info) => {
     }
 
 }
-
+//Hàm lấy thông tin của 1 giáo viên (trường hợp chính giáo viên lấy thông tin của mình)
 const getOneTeacher = async(condition) => {
     const result = await Teachers.getOneTeacher(condition);
 
@@ -122,7 +128,7 @@ const getOneTeacher = async(condition) => {
         data: result.data
     };
 }
-
+//Hàm lấy thông tin của 1 số giảng viên
 const getManyTeachers = async(condition) => {
     const result = await Teachers.getManyTeachers(condition);
     if(!result.success) {
@@ -135,14 +141,12 @@ const getManyTeachers = async(condition) => {
         data: result.data
     }
 }
-
+//Hàm lấy thông tin của All GV
 const getAllTeachers = async () => {
     const result = await Teachers.getAllTeachers();
     if(!result.success) {
         return result;
     }
-    console.log(result);
-
     return {
         success: true,
         message: 'Truy vấn thông tin tất cả giảng viên thành công!',
@@ -150,7 +154,9 @@ const getAllTeachers = async () => {
     }
 }
 
-
+//Hàm cập nhật thông tin giảng viên
+//B1: Check xem mã số GV có tồn tại ko? Nếu ko thì báo error
+//B2: Tiến hành cập nhật ở Db
 const updateInfoTeacher = async(teacher_id, updatingInfo) => {
     const checkExist = await Teachers.checkExist({ teacher_id });
 
@@ -172,7 +178,9 @@ const updateInfoTeacher = async(teacher_id, updatingInfo) => {
         message: `Cập nhật thông tin giảng viên có mã ${teacher_id} thành công!`
     };
 }
-
+//Hàm xóa thông tin giảng viên
+//B1: Check xem mã số GV có tồn tại ko? Nếu ko thì báo error
+//B2: Tiến hành xóa ở Db
 const deleteTeacher = async(teacher_id) => {
     
     const checkExist = await Teachers.checkExist({ teacher_id });
@@ -197,6 +205,10 @@ const deleteTeacher = async(teacher_id) => {
     }
 }
 
+//Hàm đổi password
+//B1: Truy vấn tài khoản có username
+//B2: Kiểm tra mật khẩu
+//B3: Cập nhật mật khẩu mới.
 const updatePassword = async(info) => {
 
     const Teacher = await Teachers.getOneTeacher({ username: info.username });
@@ -226,6 +238,7 @@ const updatePassword = async(info) => {
 
 }
 
+//Hàm truy vấn lớp của giảng viên
 const getClasses = async(teacher_id) => {
     const teacher = await Teachers.getOneTeacher({ teacher_id });
     const dbCollection = `teachers/${teacher.data.id}/classes`;

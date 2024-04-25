@@ -1,8 +1,9 @@
 const coursesService = require("../services/coursesService");
 const modelsResponse = require("../models/response");
 const coursesValidation = require("../validations/coursesValidation");
-
 const validation = new coursesValidation;
+
+//Hàm dùng để tạo mới Môn học
 const createCourse = async (req, res) => {
     try {
         const { error } = validation.validateCreateCourse(req.body);
@@ -20,6 +21,9 @@ const createCourse = async (req, res) => {
     }
 }
 
+//Hàm dùng để lấy thông tin của môn học
+//Nếu req.body rỗng thì lấy thông tin tất cả các môn học
+//Ngược lại chỉ lấy những môn học được chỉ định có thông tin trong req.body
 const getInfoCourse = async (req, res) => {
     try {
         const { error } = validation.validateUpdateCourse(req.body);
@@ -42,6 +46,7 @@ const getInfoCourse = async (req, res) => {
     }
 }
 
+//Hàm dùng để cập nhật thông tin của Môn học bằng course_id
 const updateCourse = async(req, res) => {
     try {
         const { error: infoError } = validation.validateUpdateCourse(req.body);
@@ -66,12 +71,15 @@ const updateCourse = async(req, res) => {
     }
 }
 
+//Hàm xóa MH bằng course_id
 const deleteCourse = async(req, res) => {
     try {
+        //Ktra course_id
         const { error } = validation.validateCourseID(req.query);
         if(error) {
             return modelsResponse.response(res, 400, error.message);
         }
+        //Xóa mh
         const resultDeleting = await coursesService.deleteCourse(req.query.course_id);
 
         if(resultDeleting.success) {
@@ -85,16 +93,18 @@ const deleteCourse = async(req, res) => {
     }
 }
 
+//Hàm lấy thông tin tất cả các lớp đang có của MH bằng course_id
 const getAllClassesInCourse = async (req, res) => {
     try {
         const { error } = validation.validateCourseID(req.query);
         if(error) {
             return modelsResponse.response(res, 400, error.message);
         }
+        //Lấy danh sách Lớp từ DB
         const resultGettingAllClass = await coursesService.getAllClassesInCourse(req.query.course_id);
         return modelsResponse.response(res, 200, resultGettingAllClass.message, resultGettingAllClass);
     } catch(error) {
-        console.log(error.message);
+        //console.log(error.message);
         return modelsResponse.response(res, 500, error.message);
     }
 }

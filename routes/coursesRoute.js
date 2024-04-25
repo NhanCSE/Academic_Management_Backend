@@ -22,9 +22,25 @@ const authenticate = (req, res, next) => {
     });
 };
 
+/*
+CÁC TRƯỜNG THÔNG TIN CỦA MÔN HỌC
+    "course_name": string
+    "credits": int => số tín chỉ
+    "course_type": string
+    "major": array string
+    "faculty" : string
+    "course_condition" : array string gồm các course_id tiên quyết
+    "student_condition" : int (1/2/3/4/5)
+    "classes": subcollection
+*/
+
+//Chỉ admin được tạo MH
 router.post("/create", authenticate, auth.isAuthorized(["Quản trị viên"]), auth.isActive(), coursesController.createCourse);
+//Tất cả mn đều có thể xem được thông tin môn học
 router.post("/get", authenticate, auth.isAuthorized(["Quản trị viên", "Giảng viên", "Sinh viên"]), auth.isActive(), coursesController.getInfoCourse);
+//Chỉ admin được cập nhật và xóa mh
 router.put("/update",authenticate, auth.isAuthorized(["Quản trị viên"]), auth.isActive(), coursesController.updateCourse);
 router.delete("/delete",authenticate, auth.isAuthorized(["Quản trị viên"]), auth.isActive(), coursesController.deleteCourse);
+//Tất cả mn đều có thể xem được thông tin lớp của môn học
 router.get("/get_classes", authenticate, auth.isAuthorized(["Quản trị viên", "Giảng viên", "Sinh viên"]), auth.isActive(), coursesController.getAllClassesInCourse)
 module.exports = router
