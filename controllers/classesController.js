@@ -140,10 +140,10 @@ const getSubmitFiles = async (req, res) => {
 
         // Pipe the pass-through stream to the response
         passThroughStream.pipe(res); 
-      } catch (error) {
+    } catch (error) {
         console.error('Error downloading files:', error.message);
         return modelsResponse.response(res, 500, "Lỗi tải file");
-      }
+    }
 
 }
 
