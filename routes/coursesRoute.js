@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 // Middleware to authenticate requests
 const authenticate = (req, res, next) => {
     const token = req.headers.authorization;
-    console.log(token);
+    console.log(`Token sent to server: ${token}`);
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized: No token provided' });
     }

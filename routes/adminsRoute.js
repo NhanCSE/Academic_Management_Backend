@@ -15,7 +15,7 @@ const jwt = require('jsonwebtoken');
 // Middleware to authenticate requests
 const authenticate = (req, res, next) => {
     const token = req.headers.authorization;
-    console.log(token);
+    console.log(`Token sent to server: ${token}`);
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized: No token provided' });
     }
@@ -51,7 +51,7 @@ router.post('/login', async (req, res, next) => {
             admin_id: Admin.data.admin_id,
             role: Admin.data.role,
             active: 1,
-        }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        }, process.env.JWT_SECRET, { expiresIn: '10h' });
         
         // Return success response with token
         return res.status(200).json({ error: false, valid: true, message: 'Xác thực thành công.', token });
@@ -62,5 +62,4 @@ router.post('/login', async (req, res, next) => {
 });
 
 router.post("/create", authenticate, auth.isAuthorized(["Quản trị viên"]), auth.isActive(), adminsController.createAdmin);
-
 module.exports = router;
