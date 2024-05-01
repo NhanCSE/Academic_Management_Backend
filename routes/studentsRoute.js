@@ -55,7 +55,7 @@ const authenticate = (req, res, next) => {
     // Verify token
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
-        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        return res.status(401).json({ error: `Unauthorized: Invalid token ${token}` });
       }
       req.user = decoded; // Attach decoded user information to request object
       next(); // Proceed to next middleware
