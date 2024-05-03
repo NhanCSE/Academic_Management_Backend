@@ -196,7 +196,7 @@ const getScoreByTeacher = async(req, res) => {
     
         const getResult = await classesService.getScoreByTeacher(req.query.class_id, req.user.teacher_id);
         if(!getResult.success) {
-            return modelsResponse.response(res, getResult.errorStatus, "Truy vấn điểm không thành công!");
+            return modelsResponse.response(res, getResult.errorStatus, getResult.message);
         }
 
         return modelsResponse.response(res, 200, getResult.message, getResult.data);
