@@ -19,7 +19,7 @@ Content-Type: application/json
     "subject": ["CS1716", "CN2690"]
 }
 ### 
-POST http://localhost:5000/api/v1/teachers/login
+POST https://academic-management-backend.onrender.com/api/v1/teachers/login
 Content-Type: application/json
 
 {
