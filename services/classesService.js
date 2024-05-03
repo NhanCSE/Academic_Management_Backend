@@ -451,9 +451,10 @@ const getSubmitFiles = async (prefix) => {
 
 }
 
-const deleteSubmitFile = async (filename) => {
+const deleteSubmitFile = async (classID, studentID, filename) => {
+    const modifiedFileName = classID + "_" + studentID + "_" + filename;
     // Get a reference to the file
-    const fileRef = storage.bucket().file(filename);
+    const fileRef = storage.bucket().file(modifiedFileName);
     await fileRef.delete();
 }
 

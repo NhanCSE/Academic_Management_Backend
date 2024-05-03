@@ -150,8 +150,15 @@ const getSubmitFiles = async (req, res) => {
 const deleteSubmitFile = async (req, res) => {
     try{
         // Define the name of the file you want to delete
+        const { error } = validation.validateClassID({ class_id: req.query.class_id });
+        if(error) {
+            console.log("Error: ", error.message);
+            return modelsResponse.response(res, 500, error.message);
+        }
+        const classID = req.query.class_id;
+        const studentID = req.user.student_id;
         const fileName = req.query.filename; // Replace with the name of the file you want to delete
-        await classesService.deleteSubmitFile(fileName);
+        await classesService.deleteSubmitFile(classID, studentID, fileName);
 
         return modelsResponse.response(res, 200, "Xóa file thành công");
     } catch (error) {
