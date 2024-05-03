@@ -1,13 +1,8 @@
 const express = require("express");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
 const auth = require("../lib/auth");
 const classesController = require("../controllers/classesController");
 const router = express.Router();
-const fs = require("fs");
 const multer = require("multer");
-const path = require("path");
 
 const jwt = require('jsonwebtoken');
 // Middleware to authenticate requests
@@ -31,7 +26,7 @@ router.post("/create", authenticate, auth.isAuthorized(["Quản trị viên"]), 
 router.post("/register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.registerClass);
 router.post("/update_score", authenticate, auth.isAuthorized(["Giảng viên"]), auth.isActive(), classesController.updateScore);
 router.put("/cancel_register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.cancelRegisterClass);
-
+router.get("/get_score", authenticate, auth.isAuthorized(["Giảng viên"]), auth.isActive(), classesController.getScoreByTeacher);
 // Storage file
 // Set up Multer storage for file uploads
 const storage = multer.memoryStorage();

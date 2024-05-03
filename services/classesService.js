@@ -1,19 +1,16 @@
-const { messaging } = require("firebase-admin");
 const Classes = require("../database/Classes");
 const Courses = require("../database/Courses");
 const Students = require("../database/Students");
 const Teachers = require("../database/Teachers");
 const { storage } = require("../firebase/firebaseConnection");
-const fs = require('fs');
 const archiver = require('archiver');
 const { PassThrough } = require('stream');
 const Scores = require("../database/Scores");
 const modelsError = require("../models/error");
 
-//Kiểm tra trùng giờ học
+// Check if two class having the same calendar or not
 const checkConflict = (class1, class2) => {
     let conflict = false;
-    console.log(class1.day, class2.day);
     if(class1.day === class2.day) {
         if((class1.period[0] >= class2.period[0] && class1.period[0] <= class2.period[class2.period.length - 1])
             || (class1.period[class1.period.length - 1] >= class2.period[0] && class1.period[class1.period.length - 1] <= class2.period[class2.period.length - 1]))
@@ -32,7 +29,7 @@ const createClass = async (info) => {
     }
     const classCollection = "courses/" + course.data.id + "/classes";
 
-
+    // Create suffixClassID base on program
     let suffixClassID;
     if(info.program === "CQ") {
         suffixClassID = "CQ"; 
@@ -42,6 +39,7 @@ const createClass = async (info) => {
         suffixClassID = "NN";
     }
     const resultGettingAllClass = await Classes.getAllClasses(classCollection);
+    // Create serial class_id
     if(resultGettingAllClass.length + 1 < 10) {
         info.class_id = info.course_id + "_" + suffixClassID + ('0' + (resultGettingAllClass.length + 1));
     } else {
@@ -52,6 +50,8 @@ const createClass = async (info) => {
     info.teacher = null;
     info.course_name = course.data.course_name;
     info.credits = course.data.credits;
+
+    // Create new class of course with above info
     const resultCreating = await Classes.createClass(info, classCollection);
     if(!resultCreating.success) {
         return resultCreating;
@@ -71,11 +71,12 @@ const registerClassForStudent = async (info, student_id) => {
     }
     const student = await Students.getOneStudent({ student_id });
     const registerClass = await Classes.getOneClass(`courses/${course.data.id}/classes`, { class_id: info.class_id });
+    // Check whether class with class_id existed or not
     if(!registerClass.success || !registerClass.data) {
         return modelsError.error(404, `Lớp học ${info.class_id} không tồn tại!`);
     }
-    const course_condition = course.data.course_condition; //Danh sách môn học tiên quyết
-    var valid = true;
+    const course_condition = course.data.course_condition; //Array of prerequisite subjects
+    var valid = true; 
     // Check if student has enough standard credits to register
     // each year require 28 credits to upgrade higher year student
     // EX: First-year student have more than 28 credits will count as Second-year student
@@ -83,14 +84,10 @@ const registerClassForStudent = async (info, student_id) => {
         return modelsError.error(404, `Sinh viên không đủ tín chỉ để đăng kí lớp này`);
     }
 
-    //Kiểm tra môn học tiên quyết
-    const preSubject = Object.keys(student.data.subject);
+    // Check prerequisite subjects
+    const preSubject = student.data.passed_course;
     for(let courseID of course_condition) {
         if(!preSubject.includes(courseID)) {
-            valid = false;
-            break;
-        } else if(student.data.subject[courseID].GPA < 4.0) {
-            // Fail the passing grade
             valid = false;
             break;
         }
@@ -100,7 +97,7 @@ const registerClassForStudent = async (info, student_id) => {
     }
     var conflict = false;
     var registeredClasses = await Classes.getRegisteredClasses(student.data);
-    //Kiểm tra có trùng lịch không
+    // Check if this class having the same calendar with another classes or not
     if(registeredClasses.success) {
         for(let registeredClass of registeredClasses.data) {
             if(checkConflict(registerClass.data, registeredClass)) {
@@ -154,7 +151,7 @@ const registerClassForTeacher = async (info, teacher_id) => {
 
     let conflict = false;
     let registeredClasses = await Classes.getRegisteredClasses(teacher.data, true);
-    //Kiểm tra có trùng lịch không
+    // Check if this class having the same calendar with another classes or not
     if(registeredClasses.success) {
         for(let registeredClass of registeredClasses.data) {
             if(checkConflict(registerClass.data, registeredClass)) {
@@ -207,7 +204,7 @@ const updateScore = async (info, class_id, teacher_id) => {
         return modelsError.error(409, "Sinh viên không học lớp này");
     }
 
-    
+    // Get courseID from class_id
     const courseID = class_id.split("_")[0];
 
     const course = await Courses.getOneCourse({ course_id: courseID });
@@ -219,6 +216,7 @@ const updateScore = async (info, class_id, teacher_id) => {
 
     const semester = studentClass.data.semester;
     
+    // Updated Information
     const updateInfo = {
         course_id: courseID,
         course_name: courseName,
@@ -236,6 +234,7 @@ const updateScore = async (info, class_id, teacher_id) => {
 
     if(!allCourseID.includes(courseID)) {
         await Scores.createScore(updateInfo, `students/${student.data.id}/scores`);
+        // If student passed this subject then increase credits
         if(updateInfo.GPA >= 4) {
             student.data.credits += updateInfo.credits;
             student.data.passed_course.push(courseID);
@@ -243,6 +242,7 @@ const updateScore = async (info, class_id, teacher_id) => {
     } else {
         subjectScore = await Scores.getOneScore(`students/${student.data.id}/scores`, { course_id: courseID });
         if(subjectScore.data.GPA < updateInfo.GPA) {
+            // Update new score which greater than old score
             await Scores.updateOneScore(`students/${student.data.id}/scores`, courseID, updateInfo);
             if(subjectScore.GPA < 4 && updateInfo.GPA > 4){
                 student.data.credits += updateInfo.credits;
@@ -264,7 +264,7 @@ const updateScore = async (info, class_id, teacher_id) => {
         sumGPA += (score.GPA * score.credits);
         countCredits += score.credits;
     }
-    console.log(sumGPA, countCredits);
+
     const overallGPA = sumGPA / countCredits; 
     const updatedInfoStudent = {
         GPA: overallGPA,
@@ -458,6 +458,49 @@ const deleteSubmitFile = async (classID, studentID, filename) => {
     await fileRef.delete();
 }
 
+const getScoreByTeacher = async(class_id, teacher_id) => {
+    const teacher = await Teachers.getOneTeacher({ teacher_id: teacher_id });
+    if(!teacher.data) {
+        return modelsError.error(404, "Không tìm thấy giảng viên!");
+    }
+
+    const teacherClass = await Classes.getAllClasses(`teachers/${teacher.data.id}/classes`);
+    const teacherClassID = teacherClass.map(ele => ele.class_id);
+    if(!teacherClassID.includes(class_id)) {
+        return modelsError.error(409, "Giảng viên không được xem điểm của lớp khác");
+    }
+    
+    const courseID = class_id.split("_")[0];
+    const course = await Courses.getManyCourses({course_id: courseID});
+
+    const currentclass = await Classes.getOneClass(`courses/${course.data.id}/classes`, {class_id: class_id});
+    const mssv = currentclass.data.students;
+    const data = []
+    for(let x of mssv){    
+        let student = await Students.getOneStudent({student_id: x});
+        let score = await Scores.getOneScore(`students/${student.data.id}/scores`, {course_id: courseID});
+        let result = {
+            'course_id': score.data.course_id,
+            'course_name': score.data.course_name,
+            'semester': score.data.semester,
+            'credits': score.data.credits,
+            'midterm': score.data.midterm,
+            'lab': score.data.lab,
+            'exercise': score.data.exercise,
+            'final': score.data.final,
+            'GPA': score.data.GPA,
+            'fullname': student.data.fullname,
+            'student_id': student.data.student_id
+        }
+        data.push(result);
+    }
+    return {
+        success: true,
+        message: 'Truy vấn điểm tất cả sinh viên lớp ' + class_id + ' thành công!',
+        data: data
+    }
+}
+
 module.exports = {
     createClass,
     registerClassForStudent,
@@ -469,5 +512,6 @@ module.exports = {
     showSubmitFileForStudent,
     showSubmitFileForTeacher,
     getSubmitFiles,
-    deleteSubmitFile
+    deleteSubmitFile,
+    getScoreByTeacher
 }
