@@ -186,6 +186,25 @@ const showSubmitFile = async (req, res) => {
         return modelsResponse.response(res, 500, "Lỗi tải file");
     } 
 }
+
+const getScoreByTeacher = async(req, res) => {
+    try {
+        const { error } = validation.validateClassID(req.query);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
+    
+        const getResult = await classesService.getScoreByTeacher(req.query.class_id, req.user.teacher_id);
+        if(!getResult.success) {
+            return modelsResponse.response(res, getResult.errorStatus, "Truy vấn điểm không thành công!");
+        }
+
+        return modelsResponse.response(res, 200, getResult.message, getResult.data);
+    } catch (error) {
+        console.log(error);
+        return modelsResponse.response(res, 500, error.message)
+    }    
+}
 module.exports = {
     createClass,
     registerClass,
@@ -194,5 +213,6 @@ module.exports = {
     submitFile,
     getSubmitFiles,
     deleteSubmitFile,
-    showSubmitFile
+    showSubmitFile,
+    getScoreByTeacher
 }

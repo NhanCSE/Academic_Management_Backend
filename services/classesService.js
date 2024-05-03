@@ -457,6 +457,49 @@ const deleteSubmitFile = async (filename) => {
     await fileRef.delete();
 }
 
+const getScoreByTeacher = async(class_id, teacher_id) => {
+    const teacher = await Teachers.getOneTeacher({ teacher_id: teacher_id });
+    if(!teacher.data) {
+        return modelsError.error(404, "Không tìm thấy giảng viên!");
+    }
+
+    const teacherClass = await Classes.getAllClasses(`teachers/${teacher.data.id}/classes`);
+    const teacherClassID = teacherClass.map(ele => ele.class_id);
+    if(!teacherClassID.includes(class_id)) {
+        return modelsError.error(409, "Giảng viên không được xem điểm của lớp khác");
+    }
+    
+    const courseID = class_id.split("_")[0];
+    const course = await Courses.getManyCourses({course_id: courseID});
+
+    const currentclass = await Classes.getOneClass(`courses/${course.data.id}/classes`, {class_id: class_id});
+    const mssv = currentclass.data.students;
+    const data = []
+    for(let x of mssv){    
+        let student = await Students.getOneStudent({student_id: x});
+        let score = await Scores.getOneScore(`students/${student.data.id}/scores`, {course_id: courseID});
+        let result = {
+            'course_id': score.data.course_id,
+            'course_name': score.data.course_name,
+            'semester': score.data.semester,
+            'credits': score.data.credits,
+            'midterm': score.data.midterm,
+            'lab': score.data.lab,
+            'exercise': score.data.exercise,
+            'final': score.data.final,
+            'GPA': score.data.GPA,
+            'fullname': student.data.fullname,
+            'student_id': student.data.student_id
+        }
+        data.push(result);
+    }
+    return {
+        success: true,
+        message: 'Truy vấn điểm tất cả sinh viên lớp ' + class_id + ' thành công!',
+        data: data
+    }
+}
+
 module.exports = {
     createClass,
     registerClassForStudent,
@@ -468,5 +511,6 @@ module.exports = {
     showSubmitFileForStudent,
     showSubmitFileForTeacher,
     getSubmitFiles,
-    deleteSubmitFile
+    deleteSubmitFile,
+    getScoreByTeacher
 }

@@ -25,7 +25,7 @@ router.post("/create", authenticate, auth.isAuthorized(["Quản trị viên"]), 
 router.post("/register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.registerClass);
 router.post("/update_score", authenticate, auth.isAuthorized(["Giảng viên"]), auth.isActive(), classesController.updateScore);
 router.put("/cancel_register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.cancelRegisterClass);
-
+router.get("/get_score", authenticate, auth.isAuthorized(["Giảng viên"]), auth.isActive(), classesController.getScoreByTeacher);
 // Storage file
 // Set up Multer storage for file uploads
 const storage = multer.memoryStorage();
