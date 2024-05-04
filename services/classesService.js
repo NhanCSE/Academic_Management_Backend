@@ -479,6 +479,7 @@ const getScoreByTeacher = async(class_id, teacher_id) => {
     for(let x of mssv){    
         let student = await Students.getOneStudent({student_id: x});
         let score = await Scores.getOneScore(`students/${student.data.id}/scores`, {course_id: courseID});
+        if(!score.data) continue;
         let result = {
             'course_id': score.data.course_id,
             'course_name': score.data.course_name,
