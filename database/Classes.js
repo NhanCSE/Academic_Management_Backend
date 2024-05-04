@@ -45,6 +45,7 @@ const registerClassSuccessForStudent = async(course, student, registerClass) => 
             room: registerClass.room,
             day: registerClass.day,
             period: registerClass.period,
+            weeks: registerClass.weeks
         }
         
         await db.collection(moduleCollection).add(classInfo);
@@ -82,6 +83,7 @@ const registerClassSuccessForTeacher = async(course, teacher, registerClass) => 
             room: registerClass.room,
             day: registerClass.day,
             period: registerClass.period,
+            weeks: registerClass.weeks
         }
         
         await db.collection(teacherClassCollection).add(classInfo);
