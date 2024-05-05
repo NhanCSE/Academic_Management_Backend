@@ -77,6 +77,12 @@ const updateScore =  async (req, res) => {
         if(error) {
             return modelsResponse.response(res, 400, error.message);
         }
+
+        const { error: conditionError } = validation.validateClassID(req.query);
+        if(conditionError) {
+            return modelsResponse.response(res, 400, conditionError.message);
+        }
+        
         const resultUpdateScore = await classesService.updateScore(req.body, req.query.class_id, req.user.teacher_id);
         if(!resultUpdateScore.success) {
             return modelsResponse.response(res, resultUpdateScore.errorStatus, resultUpdateScore.message);

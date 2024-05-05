@@ -66,7 +66,7 @@ const generateUsername = (fullname, teacher_id) => {
 //Bước 1 Tạo teacher_id bằng hàm hỗ trợ => nếu không thành công --> error
 //Bước 2 Tạo thông tin một số trường còn thiếu
 //Bước 3 Tạo thông tin GV ở dưới DB
-//Bước 4 Gủi mail yêu cầu đổi pass để kích hoạt active=1
+//Bước 4 Gủi mail yêu cầu đổi pass 
 const createTeacher = async (info) => {
 
     const resultGeneratingID = await generateTeacherId("GV");
