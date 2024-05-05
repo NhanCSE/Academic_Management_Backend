@@ -68,7 +68,6 @@ const getManyStudents = async (condition) => {
         const conditionFields = Object.keys(condition);
         const conditionValues = Object.values(condition);
         const result =  await dbUtils.findUnion("students", conditionFields, conditionValues);
-        
         return {
             success: true,
             data: result

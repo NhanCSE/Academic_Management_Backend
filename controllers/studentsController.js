@@ -53,6 +53,11 @@ const getInfoStudent = async(req, res) => {
             if(!resultGetting.data) {
                 return modelsResponse.response(res, 404, "Không có sinh viên cần tìm");
             }
+            if(!resultGetting.data.length) {
+                if(resultGetting.data.hasOwnProperty("password")) {
+                    delete resultGetting.data.password;
+                }
+            }
             if(resultGetting.data.length > 0) {
                 resultGetting.data.forEach(element => {
                     if (element.hasOwnProperty('password')) {
