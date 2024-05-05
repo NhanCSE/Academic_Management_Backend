@@ -66,7 +66,7 @@ Content-Type: application/json
 
 GET http://localhost:5000/api/v1/students/get_classes
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNzA5NTgiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzEzOTQwNDU0LCJleHAiOjE3MTM5NDQwNTR9.uDU3hMyssQyMcwKe29d48b1wK3UoP0BW9xGiGPuW5ac
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNDMwMDQiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzE0ODk4MDU1LCJleHAiOjE3MTQ5MzQwNTV9.fsSRnXCSaLUsRi-YL75g5-xkJwoIB7nRKm9AOIgjH6M
 
 {
     
