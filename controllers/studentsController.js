@@ -50,6 +50,9 @@ const getInfoStudent = async(req, res) => {
             else {
                 resultGetting = await studentsService.getManyStudents(req.body);
             }
+            if(!resultGetting.data) {
+                return modelsResponse.response(res, 404, "Không có sinh viên cần tìm");
+            }
             if(resultGetting.data.length > 0) {
                 resultGetting.data.forEach(element => {
                     if (element.hasOwnProperty('password')) {

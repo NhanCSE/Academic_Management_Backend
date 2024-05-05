@@ -21,10 +21,10 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMi
 ###
 POST http://localhost:5000/api/v1/students/get
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTM2MDM4MTcsImV4cCI6MTcxMzYwNzQxN30.CAKGD633K_gP6ec-GWucvucSwhD5cNeuVE_tS_jpL2w
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTQ5MzI3OTksImV4cCI6MTcxNDk2ODc5OX0.lVp-o_idUMgmHA7xl2u1sdA97k2MymazGQci_ewj3qg
 
 {
-                                                                           
+    "student_id": "24110830"                                                                           
 }
 
 ###
