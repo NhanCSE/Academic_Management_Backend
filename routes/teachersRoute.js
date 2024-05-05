@@ -46,11 +46,7 @@ router.post('/login', async (req, res, next) => {
 // Middleware to authenticate requests
 const authenticate = (req, res, next) => {
     const token = req.headers.authorization;
-<<<<<<< HEAD
-    //console.log(token);
-=======
     console.log(`Token sent to server: ${token}`);
->>>>>>> 658ae1a993d134a36f59352c8f67ac3a7e5f9451
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized: No token provided' });
     }
