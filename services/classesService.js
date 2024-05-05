@@ -64,6 +64,25 @@ const createClass = async (info) => {
 
 }
 
+const getClassInfo = async (class_id) => {
+    const course_id = class_id.split("_")[0];
+    const course = await Courses.getOneCourse({ course_id });
+    if(!course.success || !course.data) {
+        return modelsError.error(404, `Môn học ${course_id} không tồn tại!`);
+    }
+
+    const classInfo = await Classes.getOneClass(`courses/${course.data.id}/classes`, { class_id });
+    // Check whether class with class_id existed or not
+    if(!classInfo.success || !classInfo.data) {
+        return modelsError.error(404, `Lớp học ${class_id} không tồn tại!`);
+    }
+
+    return {
+        success: true,
+        data: classInfo.data
+    }
+}
+
 const registerClassForStudent = async (info, student_id) => {
     const course = await Courses.getOneCourse({ course_id: info.course_id });
     if(!course.success || !course.data) {
@@ -514,5 +533,6 @@ module.exports = {
     showSubmitFileForTeacher,
     getSubmitFiles,
     deleteSubmitFile,
-    getScoreByTeacher
+    getScoreByTeacher,
+    getClassInfo
 }

@@ -5,6 +5,7 @@ const router = express.Router();
 const multer = require("multer");
 
 const jwt = require('jsonwebtoken');
+const { route } = require("./teachersRoute");
 // Middleware to authenticate requests
 const authenticate = (req, res, next) => {
     const token = req.headers.authorization;
@@ -23,6 +24,7 @@ const authenticate = (req, res, next) => {
     });
 };
 router.post("/create", authenticate, auth.isAuthorized(["Quản trị viên"]), auth.isActive(), classesController.createClass);
+router.get("/get", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên", "Quản trị viên"]), auth.isActive(), classesController.getClassInfo);
 router.post("/register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.registerClass);
 router.post("/update_score", authenticate, auth.isAuthorized(["Giảng viên"]), auth.isActive(), classesController.updateScore);
 router.put("/cancel_register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.cancelRegisterClass);

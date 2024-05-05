@@ -79,3 +79,13 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNzA5
 {
     
 }
+
+###
+
+GET http://localhost:5000/api/v1/classes/get?class_id=CS1716_CQ01
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNDMwMDQiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzE0ODk3NTc2LCJleHAiOjE3MTQ5MzM1NzZ9.F_nYyBbJaaXMGP0b0KdMY1BrV8GNeHlmYqcHNQaUN0c
+
+{
+    
+}
