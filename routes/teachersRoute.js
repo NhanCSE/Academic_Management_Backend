@@ -32,7 +32,7 @@ router.post('/login', async (req, res, next) => {
             teacher_id: Teacher.data.teacher_id,
             role: Teacher.data.role,
             active: 1,
-        }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        }, process.env.JWT_SECRET, { expiresIn: '10h' });
         
         // Return success response with token
         return res.status(200).json({ error: false, valid: true, message: 'Xác thực thành công.', token });
@@ -46,7 +46,11 @@ router.post('/login', async (req, res, next) => {
 // Middleware to authenticate requests
 const authenticate = (req, res, next) => {
     const token = req.headers.authorization;
+<<<<<<< HEAD
     //console.log(token);
+=======
+    console.log(`Token sent to server: ${token}`);
+>>>>>>> 658ae1a993d134a36f59352c8f67ac3a7e5f9451
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized: No token provided' });
     }
@@ -54,7 +58,7 @@ const authenticate = (req, res, next) => {
     // Verify token
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
-        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        return res.status(401).json({ error: `Unauthorized: Invalid token ${token}` });
       }
       req.user = decoded; // Attach decoded user information to request object
       next(); // Proceed to next middleware

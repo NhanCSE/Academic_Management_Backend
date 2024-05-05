@@ -35,7 +35,7 @@ app.set('view engine', 'jade');
 // 	next();
 // });
 
-const allowedOrigins = ["https://mybk.hcmut.edu.vn", "https://wiki.hcmut.edu.vn", "https://app.tdlogistics.net.vn", "https://bktemple.vercel.app", "https://stu-admin.vercel.app"];
+const allowedOrigins = ["http://localhost:3000", "https://stu-admin.vercel.app"];
 
 app.set("trust proxy", 1);
 

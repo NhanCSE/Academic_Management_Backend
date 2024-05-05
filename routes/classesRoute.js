@@ -1,18 +1,14 @@
 const express = require("express");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
 const auth = require("../lib/auth");
 const classesController = require("../controllers/classesController");
 const router = express.Router();
-const fs = require("fs");
 const multer = require("multer");
-const path = require("path");
 
 const jwt = require('jsonwebtoken');
 // Middleware to authenticate requests
 const authenticate = (req, res, next) => {
     const token = req.headers.authorization;
+    console.log(`Token sent to server: ${token}`);
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized: No token provided' });
     }
@@ -20,7 +16,7 @@ const authenticate = (req, res, next) => {
     // Verify token
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
-        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        return res.status(401).json({ error: `Unauthorized: Invalid token ${token}` });
       }
       req.user = decoded; // Attach decoded user information to request object
       next(); // Proceed to next middleware
@@ -30,7 +26,7 @@ router.post("/create", authenticate, auth.isAuthorized(["Quản trị viên"]), 
 router.post("/register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.registerClass);
 router.post("/update_score", authenticate, auth.isAuthorized(["Giảng viên"]), auth.isActive(), classesController.updateScore);
 router.put("/cancel_register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.cancelRegisterClass);
-
+router.get("/get_score", authenticate, auth.isAuthorized(["Giảng viên"]), auth.isActive(), classesController.getScoreByTeacher);
 // Storage file
 // Set up Multer storage for file uploads
 const storage = multer.memoryStorage();
@@ -59,6 +55,7 @@ const upload = multer({
   fileFilter: fileFilter 
 });
 
+// Nộp file dành cho sinh viên
 router.post("/submit_file", 
   authenticate, 
   auth.isAuthorized(["Sinh viên"]), 
@@ -67,6 +64,7 @@ router.post("/submit_file",
   classesController.submitFile
 );
 
+// Tải zip các file đã nộp trong một lớp của sinh viên
 router.get("/get_files", 
   authenticate, 
   auth.isAuthorized(["Sinh viên", "Giảng viên"]), 
@@ -74,13 +72,16 @@ router.get("/get_files",
   classesController.getSubmitFiles
 );
 
+
+// Xóa file nộp
 router.delete("/delete_file", 
   authenticate, 
-  auth.isAuthorized(["Sinh viên", "Giảng viên"]), 
+  auth.isAuthorized(["Sinh viên"]), 
   auth.isActive(),
   classesController.deleteSubmitFile
 );
 
+// Trả về array tên file đã nộp
 router.get("/show_files",
   authenticate, 
   auth.isAuthorized(["Sinh viên", "Giảng viên"]), 

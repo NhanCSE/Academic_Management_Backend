@@ -1,10 +1,11 @@
 ###
 POST  http://localhost:5000/api/v1/students/create
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTQ2NDAyMzQsImV4cCI6MTcxNDY3NjIzNH0.QDkzXluFrrajaRRhm9GzNt06tVWAQZflgww_KSWaQTo
 
 {
     "fullname": "Nguyễn Hoàng Long",                  
-    "date_of_birth": "12-02-2004",                                     
+    "date_of_birth": "2004-02-12",                                     
     "gender": "Nam",                               
     "credential_id": "089204009777",               
     "phone_number": "0787919942",                  
@@ -25,22 +26,14 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMi
 {
                                                                            
 }
-###
-POST https://academic-management-backend.onrender.com/api/v1/students/login
-Content-Type: application/json
-
-{
-    "username": "hoang.tran24110830",
-    "password": "Nhan@tran24134447"
-}
 
 ###
 POST http://localhost:5000/api/v1/students/login
 Content-Type: application/json
 
 {
-    "username": "long.nguyen24270958",
-    "password": "Nhan@tran24134447"
+    "username": "long.nguyen24243004",
+    "password": "Student@24243004"
 }
 
 ### update student
@@ -64,9 +57,9 @@ PUT http://localhost:5000/api/v1/students/update_password
 Content-Type: application/json
 
 {
-    "username": "long.nguyen24270958",
+    "username": "long.nguyen24243004",
     "password": "089204009777",
-    "new_password": "Nhan@tran24134447"
+    "new_password": "Student@24243004"
 }
 
 ###

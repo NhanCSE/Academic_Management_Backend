@@ -1,7 +1,7 @@
 const { database: db } = require("../firebase/firebaseConnection");
 const dbUtils = require("../lib/dbUtils");
 const studentsRef = db.collection("students");
-const coursesRef = db.collection("courses")
+const coursesRef = db.collection("courses");
 const modelsError = require("../models/error");
 
 const checkExist = async (condition) => {

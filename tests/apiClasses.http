@@ -54,9 +54,9 @@ Content-Type: application/json
 }
 
 ###
-DELETE  http://localhost:5000/api/v1/classes/delete_file?filename=CS1716_CQ01_24270958_Bảng 2.pdf
+DELETE  http://localhost:5000/api/v1/classes/delete_file?class_id=CN2690_CC01&filename=0S Labs Inclass Guide - HK221.pdf
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNzA5NTgiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzEzODc3NTE0LCJleHAiOjE3MTM4ODExMTR9.NyFnsBr_zdEU-cwUN6ip180QsNyjvjBpMOYN2LQseM0
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNDMwMDQiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzE0NzQ0NTk3LCJleHAiOjE3MTQ3ODA1OTd9.cdrDZgdk4RWBF4GUUKE_EILZHI-8-9_aHWVVJq92-Zk
 
 {
     

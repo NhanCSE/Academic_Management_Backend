@@ -24,6 +24,7 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMi
 ###
 GET http://localhost:5000/api/v1/courses/get_classes?course_id=CN2690
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQxMTA4MzAiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzE0NDg0NTc1LCJleHAiOjE3MTQ0ODgxNzV9.aNwBExsgOvHTPFQ3k6B8RY6Q8QJ2rIYMuo1b4QbGMFk
 
 {
    
