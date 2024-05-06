@@ -33,7 +33,7 @@ Content-Type: application/json
 
 {
     "username": "long.nguyen24243004",
-    "password": "Student@24243004"
+    "password": "Student@242430041"
 }
 
 ### update student
@@ -67,7 +67,7 @@ Content-Type: application/json
 
 GET http://localhost:5000/api/v1/students/get_classes
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNDMwMDQiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzE0ODk4MDU1LCJleHAiOjE3MTQ5MzQwNTV9.fsSRnXCSaLUsRi-YL75g5-xkJwoIB7nRKm9AOIgjH6M
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNDMwMDQiLCJyb2xlIjoiU2luaCB2acOqbiIsImFjdGl2ZSI6MSwiaWF0IjoxNzE0OTg4MzE1LCJleHAiOjE3MTUwMjQzMTV9.WfStwRmgp8lHDlEA7vgQmFFAEcTHpDTidrCfQnOoFLU
 
 {
     

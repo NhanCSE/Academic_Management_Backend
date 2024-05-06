@@ -1,6 +1,7 @@
 const Students = require("../database/Students");
 const Classes = require("../database/Classes");
 const Scores = require("../database/Scores");
+const Teachers = require("../database/Teachers");
 const modelsError = require("../models/error");
 const bcrypt = require("bcrypt");
 const utils = require("../lib/utils");
@@ -309,6 +310,16 @@ const getClasses = async(student_id) => {
     const student = await Students.getOneStudent({ student_id });
     const dbCollection = `students/${student.data.id}/classes`;
     const result = await Classes.getAllClasses(dbCollection);
+    for(let oneClass of result) {
+        if(oneClass.teacher) {
+            const teacher = await Teachers.getOneTeacher({ teacher_id: oneClass.teacher});
+            if(!teacher.data) {
+                oneClass.teacher = null;
+                continue;
+            } 
+            oneClass.teacher = teacher.data.fullname;
+        }
+    }
     return {
         success: true,
         data: result,
