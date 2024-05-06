@@ -5,17 +5,18 @@ Content-Type: application/json
 {
     "fullname": "Trần Thế Nhân",
     "admin_id": "2210383",
-    "username": "tranthenhan",
-    "password": "password"
+    "username": "admin123",
+    "password": "admin123"
 }
 
 ###
+
 POST http://localhost:5000/api/v1/admins/login
 Content-Type: application/json
 
 {
-    "username": "tranthenhan",
-    "password": "password"
+    "username": "admin123",
+    "password": "admin123"
 }
 
 ###
