@@ -37,11 +37,12 @@ Content-Type: application/json
 }
 
 ### update student
-PUT http://localhost:5000/api/v1/students/update?student_id=24270958
+PUT http://localhost:5000/api/v1/students/update?student_id=24243004
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTQ5Nzg0NDYsImV4cCI6MTcxNTAxNDQ0Nn0.LSa9fyjwGQZD-cEJUInAe98fYrv9Ph_FLJ28tx5x6hM
 
 {
-    "contact_email": "nhan.trantheasaan@gmail.com"                                                                           
+    "password": "Student@24243004"                                                                          
 }
 
 ### update student

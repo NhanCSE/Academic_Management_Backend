@@ -35,7 +35,7 @@ app.set('view engine', 'jade');
 // 	next();
 // });
 
-const allowedOrigins = ["http://localhost:3000", "https://stu-admin.vercel.app"];
+const allowedOrigins = ["http://localhost:3000", "https://stu-admin.vercel.app", "https://stinfo-beta.vercel.app"];
 
 app.set("trust proxy", 1);
 

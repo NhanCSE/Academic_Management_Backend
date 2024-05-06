@@ -25,7 +25,7 @@ const authenticate = (req, res, next) => {
 };
 router.post("/create", authenticate, auth.isAuthorized(["Quản trị viên"]), auth.isActive(), classesController.createClass);
 router.get("/get", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên", "Quản trị viên"]), auth.isActive(), classesController.getClassInfo);
-router.get("/get_students", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên", "Quản trị viên"]), auth.isActive(), classesController.getStudentInClass)
+router.get("/get_students", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên", "Quản trị viên"]), auth.isActive(), classesController.getStudentInClass);
 router.post("/register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.registerClass);
 router.post("/update_score", authenticate, auth.isAuthorized(["Giảng viên"]), auth.isActive(), classesController.updateScore);
 router.put("/cancel_register", authenticate, auth.isAuthorized(["Sinh viên", "Giảng viên"]), auth.isActive(), classesController.cancelRegisterClass);
