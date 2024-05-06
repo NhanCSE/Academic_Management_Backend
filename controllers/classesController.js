@@ -52,6 +52,25 @@ const registerClass = async (req, res) => {
     }
 }
 
+const getStudentInClass = async (req, res) => {
+    try{
+        const { error } = validation.validateClassID(req.query);
+        if(error) {
+            return modelsResponse.response(res, 400, error.message);
+        }
+        const resultGettingClassInfo = await classesService.getStudentInClass(req.query.class_id);
+        if(!resultGettingClassInfo.success) {
+            return resultGettingClassInfo;
+        }
+
+        return modelsResponse.response(res, 200, `Lấy thông tin sinh viên lớp ${req.query.class_id} thành công!`, resultGettingClassInfo.data);
+    
+    } catch (error) {
+        console.log("Error appear getClassInfo:", error.message);
+        return modelsResponse.response(res, 500, error.message);
+    }
+}
+
 const getClassInfo = async (req, res) => {
     try{
         const { error } = validation.validateClassID(req.query);
@@ -247,5 +266,6 @@ module.exports = {
     deleteSubmitFile,
     showSubmitFile,
     getScoreByTeacher,
-    getClassInfo
+    getClassInfo,
+    getStudentInClass
 }

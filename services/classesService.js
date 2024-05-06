@@ -64,6 +64,29 @@ const createClass = async (info) => {
 
 }
 
+const getStudentInClass = async (class_id) => {
+    const resultGettingClassData = await getClassInfo(class_id);
+    if(!resultGettingClassData.success) {
+        return modelsError.error(resultGettingClassData.errorStatus, resultGettingClassData.message);
+    } 
+
+    const classData = resultGettingClassData.data;
+    let studentClassInfo = new Array();
+    for(let i = 0; i < classData.students.length; i++) {
+        const resultGettingStudent = await Students.getOneStudent({ student_id: classData.students[i] });
+        if(!resultGettingStudent.data) continue;
+        if(resultGettingStudent.data.hasOwnProperty("password")) {
+            delete resultGettingStudent.data.password;
+        }
+        studentClassInfo.push(resultGettingStudent.data);
+    }
+
+    return {
+        success: true,
+        data: studentClassInfo
+    }
+}
+
 const getClassInfo = async (class_id) => {
     const course_id = class_id.split("_")[0];
     const course = await Courses.getOneCourse({ course_id });
@@ -534,5 +557,6 @@ module.exports = {
     getSubmitFiles,
     deleteSubmitFile,
     getScoreByTeacher,
-    getClassInfo
+    getClassInfo,
+    getStudentInClass
 }

@@ -89,3 +89,13 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50X2lkIjoiMjQyNDMw
 {
     
 }
+
+###
+
+GET http://localhost:5000/api/v1/classes/get_students?class_id=CS1716_CQ01
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTQ5Nzc2NzQsImV4cCI6MTcxNTAxMzY3NH0.P3b7f0vj732lYYGDIVHnZjxNkgtXPqQ8qfxVK9w6Sy8
+
+{
+    
+}
