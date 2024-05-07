@@ -24,6 +24,6 @@ POST https://academic-management-backend.onrender.com/api/v1/admins/login
 Content-Type: application/json
 
 {
-    "username": "tranthenhan",
-    "password": "password"
+    "username": "admin123",
+    "password": "admin123"
 }

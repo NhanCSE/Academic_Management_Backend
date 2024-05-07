@@ -2,29 +2,29 @@
 ### huy.bui52207
 POST  http://localhost:5000/api/v1/teachers/create
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTUwMDc2OTYsImV4cCI6MTcxNTA0MzY5Nn0.MD2xAyys6h7yy03En84xihalBc2hcApVWfOxH7-DSU8
 
 {
     "fullname": "Bùi Đức Huy",
     "gender": "Nam",
-    "date_of_birth": "26-09-2005",
+    "date_of_birth": "1980-09-26",
     "credential_id": "012111111123",
     "phone_number": "0792222223",
     "contact_email": "nhan.tranthek22cs@hcmut.edu.vn",
     "address": "TP Hồ Chí Minh",
-    "homeroom_class": "MT22KH05",
-    "level": "Thạc sĩ",
+    "home_class": "MT22KH05",
+    "degree": "Thạc sĩ",
     "faculty": "Khoa Khoa học và Kỹ thuật Máy tính",
     "major": "Công nghệ thông tin",
-    "role": "Giảng viên",
-    "subject": ["CS1716", "CN2690"]
+    "subject": ["CS1234", "CN1462", "CN1138"]
 }
-### 
+### eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWFjaGVyX2lkIjoiR1Y4Njc1OSIsInJvbGUiOiJHaeG6o25nIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTUwMDgxMDcsImV4cCI6MTcxNTA0NDEwN30.NerlxE-M2Pq2lhbeFuOYASpwunZkdkzestbsPJ5z2AY
 POST https://academic-management-backend.onrender.com/api/v1/teachers/login
 Content-Type: application/json
 
 {
-    "username": "huy.bui53587",
-    "password": "huy.bui53587"
+    "username": "huy.bui86759",
+    "password": "huy.bui86759"
 }
 
 ###

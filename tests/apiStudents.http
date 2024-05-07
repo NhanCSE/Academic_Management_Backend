@@ -1,21 +1,21 @@
 ###
 POST  http://localhost:5000/api/v1/students/create
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTQ2NDAyMzQsImV4cCI6MTcxNDY3NjIzNH0.QDkzXluFrrajaRRhm9GzNt06tVWAQZflgww_KSWaQTo
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbl9pZCI6IjIyMTAzODMiLCJyb2xlIjoiUXXhuqNuIHRy4buLIHZpw6puIiwiYWN0aXZlIjoxLCJpYXQiOjE3MTUwMDc2OTYsImV4cCI6MTcxNTA0MzY5Nn0.MD2xAyys6h7yy03En84xihalBc2hcApVWfOxH7-DSU8
 
 {
-    "fullname": "Nguyễn Hoàng Long",                  
-    "date_of_birth": "2004-02-12",                                     
+    "fullname": "Hoàng Thái Cực",                  
+    "date_of_birth": "2004-07-30",                                     
     "gender": "Nam",                               
-    "credential_id": "089204009777",               
+    "credential_id": "056204109777",               
     "phone_number": "0787919942",                  
     "contact_email": "nhan.tranthek22cs@hcmut.edu.vn",     
-    "address": "Tỉnh An Giang",                                            
-    "class": "MT22KH01",                           
-    "faculty": "Khoa học và Kỹ thuật máy tính",    
-    "major": "Khoa học máy tính",                  
+    "address": "Tỉnh Kiên Giang",                                            
+    "class": "CK22DT01",                           
+    "faculty": "Khoa Cơ khí",    
+    "major": "Cơ điện tử",                  
     "level": "Đại học",                            
-    "program": "CLC"                                                               
+    "program": "CQ"                                                               
 }
 
 ###
